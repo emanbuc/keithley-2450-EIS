@@ -14,11 +14,6 @@ function generateFreqSweep(freqSweepStart,freqSweepStop,freqSweepStep)
 end
 
 
--- generate signal
--- local N = 10 -- # numero campioni per periodo da generare
--- local samplingFreq = 100 [Hz]
--- local signalFrequency = 2
--- local amplitude = 1e-3 [A]
 
 -- Generate sine wave
 -- A is the amplitude of the sine wave.
@@ -40,29 +35,34 @@ function generateSinusoidalSignal(sampleTime,signalFrequency,A,po,b)
 	end
 	return signal
 end
+
 -- ======================================
+--  GENERATE CURRENT SIGNAL ---
+-- --------------------------------------
 
--- generate sinusoidal waveform signal samples
-
-local sampleTime = 0.01 --[Hz]
-local A = 1e-3 --[A]
-local po=0
-local b = 0
-
+-- Frequency sweep configuration
 --
--- Frequency sweep
---
-
 local freqSweepStart = 0.1
 local freqSweepStop = 0.2
 local freqSweepStep = 0.1
+
+-- Frequency sweep calculation
+-- 
 local stepN = math.floor((freqSweepStop - freqSweepStart)/freqSweepStep)
 print("Frequency sweep. start: %g, stop: %g , step: %g",freqSweepStart,freqSweepStop,freqSweepStep)
 local sweep = generateFreqSweep(freqSweepStart,freqSweepStop,freqSweepStep)
 for sweepIndex=0,stepN do print(sweep[sweepIndex]) end
 
+
+--  sinusoidal waveform parameters
 -- 
--- current sweep signal
+local sampleTime = 0.5 -- signal sampling period [s]
+local A = 1e-3 -- current signal amplitude [A]
+local po=0 -- phase offset
+local b = 0 -- DC bias
+
+
+-- signal generation
 --
 
 local currentLevels = {}
@@ -80,7 +80,6 @@ for sweepIndex=0,stepN do
 	end		
 end
 
---local currentLevels = generateSinusoidalSignal(samplingFreq,N,signalFrequency,amplitude)
 
 --
 --Reset the instrument
@@ -102,22 +101,25 @@ smu.source.configlist.store("CurrentListSweep")
 end
 
 --
---Measure Settings
---
-smu.measure.func = smu.FUNC_DC_VOLTAGE
-smu.measure.autorange = smu.ON
-smu.measure.nplc = 1
-smu.measure.sense=smu.SENSE_4WIRE
-smu.measure.autozero.enable = smu.OFF
-smu.measure.autozero.once()
-
---
 --Source Settings
 --
 smu.source.func = smu.FUNC_DC_CURRENT
 smu.source.vlimit.level = 21
+smu.source.delay = 0
+smu.source.readback = smu.OFF
 
-delay = sampleTime 
+--
+--Measure Settings
+--
+smu.measure.func = smu.FUNC_DC_VOLTAGE
+smu.measure.autorange = smu.ON
+smu.measure.nplc = 0.01
+smu.measure.sense=smu.SENSE_4WIRE
+smu.measure.autozero.enable = smu.OFF
+smu.measure.autozero.once()
+
+
+delay = sampleTime
 repetition =1
 startFrom = 1
 
