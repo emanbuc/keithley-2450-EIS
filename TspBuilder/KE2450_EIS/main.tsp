@@ -29,12 +29,24 @@ function generateSinusoidalSignal(sampleTime,signalFrequency,A,po,b)
  
 	local signal = {}    -- new array
 	for k=0,p-1 do 
-		--k is a repeating integer value that ranges from 0 to p–1
+		--k is a repeating integer value that ranges from 0 to p-1
 		-- y=Asin(2pi(k+o)/p)+b
 		signal[k]=A*math.sin(2*math.pi*(k+po)/p)+b
 	end
 	return signal
 end
+
+function generateSinusoidalSignalSampleBased(sampleTime,signalFrequency,N,A,po,b)
+	print(string.format("signal frequency %g",signalFrequency))
+	local signalPeriod = 1/signalFrequency
+	local signal = {}    -- new array
+	for k=0,N-1 do 
+		signal[k]=A*math.sin(2*math.pi*k*sampleTime+po)+b
+	end
+	return signal
+end
+
+signal[k]=A*math.sin(2*math.pi*k*sampleTime+po)+b
 
 -- ======================================
 --  GENERATE CURRENT SIGNAL ---
@@ -56,10 +68,11 @@ for sweepIndex=0,stepN do print(sweep[sweepIndex]) end
 
 --  sinusoidal waveform parameters
 -- 
-local sampleTime = 0.5 -- signal sampling period [s]
+local sampleTime = 0.5 -- output signal sampling period [s]
 local A = 1e-3 -- current signal amplitude [A]
 local po=0 -- phase offset
 local b = 0 -- DC bias
+local N = 1000 -- signal lengh (sample number)
 
 
 -- signal generation
@@ -73,7 +86,10 @@ for sweepIndex=0,stepN do
 	print("generate signal")
 	print(string.format("frequency sweep index: %g - freq: %g", sweepIndex,freq))
 	
-	local generatedSignal = generateSinusoidalSignal(sampleTime,freq,A,po,b)
+	--local signalPeriod = 1/signalFrequency
+	--local N= math.floor(signalPeriod/sampleTime)
+
+	local generatedSignal = generateSinusoidalSignal(sampleTime,freq,N,A,po,b)
 	for i, value in generatedSignal do
 		currentLevels[signalSampleIndex]= value
 		signalSampleIndex = signalSampleIndex+1
