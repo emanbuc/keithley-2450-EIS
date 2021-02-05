@@ -14,17 +14,6 @@ function generateFreqSweep(freqSweepStart,freqSweepStop,freqSweepStep)
 end
 
 
--- create a number sequence generator as a closure
-function sequence(from,to,step)
-  local i = from - 1
-  return function()
-    if i < to then
-      i = i + step
-      return i
-    end
-  end
-end
-
 -- generate signal
 -- local N = 10 -- # numero campioni per periodo da generare
 -- local samplingFreq = 100 [Hz]
@@ -34,7 +23,7 @@ function generateSinusoidalSignal(samplingFreq,N,signalFrequency,amplitude)
 	print(string.format("signal frequency %g",signalFrequency))
 	local samplingPeriod = 1/samplingFreq
 	local signal = {}    -- new array
-	for i in sequence(0,N,1) do 
+	for i=0,N do 
 		signal[i]=math.sin(2*math.pi*signalFrequency*i*samplingPeriod)* amplitude
 	end
 	return signal
@@ -43,8 +32,8 @@ end
 
 -- generate sinusoidal waveform signal samples
 
-local N = 1000 -- # numero  da generare per ogni step dello sweep
-local samplingFreq = 100 --[Hz]
+local N = 1000 --1000 -- # numero  da generare per ogni step dello sweep
+local samplingFreq = 1000 --[Hz]
 --local signalFrequency = 2
 local amplitude = 1e-3 --[A]
 
@@ -107,8 +96,8 @@ smu.measure.func = smu.FUNC_DC_VOLTAGE
 smu.measure.autorange = smu.ON
 smu.measure.nplc = 1
 smu.measure.sense=smu.SENSE_4WIRE
---smu.measure.autozero.enable = smu.OFF
---smu.measure.autozero.once()
+smu.measure.autozero.enable = smu.OFF
+smu.measure.autozero.once()
 
 --
 --Source Settings
