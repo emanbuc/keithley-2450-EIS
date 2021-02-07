@@ -51,6 +51,9 @@ end
 file_num = file.open(fileName,
 file.MODE_WRITE)
 if file_num != nil then
-file.write(file_num, "This is my test file")
-file.close(file_num)
+	print("Time,Current,Voltage")
+	for i=1,defbuffer1.n do
+		file.write(file_num,string.format("%s,%g,%g",defbuffer1.timestamps[i],defbuffer1.sourcevalues[i], defbuffer1.readings[i]))
+	end
+	file.close(file_num)
 end

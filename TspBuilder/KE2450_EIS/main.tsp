@@ -38,7 +38,6 @@ end
 
 function generateSinusoidalSignalSampleBased(sampleTime,signalFrequency,N,A,po,b)
 	print(string.format("signal frequency %g",signalFrequency))
-	local signalPeriod = 1/signalFrequency
 	local signal = {}    -- new array
 	for k=0,N-1 do 
 		signal[k]=A*math.sin(2*math.pi*k*sampleTime+po)+b
@@ -46,17 +45,48 @@ function generateSinusoidalSignalSampleBased(sampleTime,signalFrequency,N,A,po,b
 	return signal
 end
 
-signal[k]=A*math.sin(2*math.pi*k*sampleTime+po)+b
+function saveToFile(dataFileName, samples)
+	file_num = file.open(dataFileName,file.MODE_WRITE)
+	if file_num != nil then
+		i=1
+		while samples[i] do
+			value = samples[i]
+			file.write(file_num,string.format("%g;%g \r\n",i,value))
+			i=i+1
+		end		
+		file.close(file_num)
+	end
+end
 
--- ======================================
---  GENERATE CURRENT SIGNAL ---
--- --------------------------------------
+-- ========================================
+-- SETTING
+
+local sourceDelay = 0 -- [s]
+local delay = 0.1 -- [s]
+local nplc = 0.01 -- range from 0.01 to 10 , default 1
+local fileName = "sweep_test_R10K_load.csv"
+local currentSignalFileName = "current_sweep_timebased.csv"
+local repetition = 1
 
 -- Frequency sweep configuration
 --
 local freqSweepStart = 0.1
 local freqSweepStop = 0.2
 local freqSweepStep = 0.1
+
+--  sinusoidal waveform parameters
+-- 
+local sampleTime = 0.1 -- output signal sampling period [s]
+local A = 1e-3 -- current signal amplitude [A]
+local po=0 -- phase offset
+local b = 0 -- DC bias
+local N = 1000 -- signal lengh (sample number)
+
+-- ======================================
+--  GENERATE CURRENT SIGNAL ---
+-- --------------------------------------
+
+
 
 -- Frequency sweep calculation
 -- 
@@ -65,14 +95,6 @@ print("Frequency sweep. start: %g, stop: %g , step: %g",freqSweepStart,freqSweep
 local sweep = generateFreqSweep(freqSweepStart,freqSweepStop,freqSweepStep)
 for sweepIndex=0,stepN do print(sweep[sweepIndex]) end
 
-
---  sinusoidal waveform parameters
--- 
-local sampleTime = 0.5 -- output signal sampling period [s]
-local A = 1e-3 -- current signal amplitude [A]
-local po=0 -- phase offset
-local b = 0 -- DC bias
-local N = 1000 -- signal lengh (sample number)
 
 
 -- signal generation
@@ -89,13 +111,18 @@ for sweepIndex=0,stepN do
 	--local signalPeriod = 1/signalFrequency
 	--local N= math.floor(signalPeriod/sampleTime)
 
-	local generatedSignal = generateSinusoidalSignal(sampleTime,freq,N,A,po,b)
+--	local generatedSignal = generateSinusoidalSignalSampleBased(sampleTime,freq,N,A,po,b)
+	local generatedSignal = generateSinusoidalSignal(sampleTime,freq,A,po,b)
+	
 	for i, value in generatedSignal do
 		currentLevels[signalSampleIndex]= value
 		signalSampleIndex = signalSampleIndex+1
 	end		
 end
 
+
+print("Save current signal  to file")
+saveToFile(currentSignalFileName,currentLevels)
 
 --
 --Reset the instrument
@@ -121,26 +148,22 @@ end
 --
 smu.source.func = smu.FUNC_DC_CURRENT
 smu.source.vlimit.level = 21
-smu.source.delay = 0
+smu.source.range = 10e-3
+smu.source.delay = sourceDelay
 smu.source.readback = smu.OFF
 
 --
 --Measure Settings
 --
 smu.measure.func = smu.FUNC_DC_VOLTAGE
-smu.measure.autorange = smu.ON
-smu.measure.nplc = 0.01
+smu.measure.range = 10
+smu.measure.nplc = nplc
 smu.measure.sense=smu.SENSE_4WIRE
 smu.measure.autozero.enable = smu.OFF
 smu.measure.autozero.once()
 
-
-delay = sampleTime
-repetition =1
-startFrom = 1
-
 print(string.format("configure sweeplist current Sweep delay: %g , repetition: %g",delay, repetition))
-smu.source.sweeplist("CurrentListSweep", startFrom, delay,repetition)
+smu.source.sweeplist("CurrentListSweep", 1,delay,repetition)
 
 print("RUN TRIGGER >>>>>>")
 --Run trigger model and wait for it to complete
@@ -154,8 +177,19 @@ print("getting raw data ....")
 if defbuffer1.n == 0 then
 	print("Buffer is empty\n")
 else
-	print("Time\tCurrent\tVoltage")
+	print("Time,Current,Voltage")
 	for i=1,defbuffer1.n do
-		print(string.format("%s\t%g\t%g",defbuffer1.timestamps[i],defbuffer1.sourcevalues[i], defbuffer1.readings[i]))
+		print(string.format("%s,%g,%g",defbuffer1.timestamps[i],defbuffer1.sourcevalues[i], defbuffer1.readings[i]))
 	end
+end
+
+-- save to file
+print("Save data to file")
+file_num = file.open(fileName,file.MODE_WRITE)
+if file_num != nil then
+	print("Time;Current;Voltage")
+	for i=1,defbuffer1.n do
+		file.write(file_num,string.format("%s;%g;%g \r\n",defbuffer1.timestamps[i],defbuffer1.sourcevalues[i], defbuffer1.readings[i]))
+	end
+	file.close(file_num)
 end
