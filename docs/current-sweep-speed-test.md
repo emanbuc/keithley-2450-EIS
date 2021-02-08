@@ -69,7 +69,7 @@ Per cercare indagare sulla possibilità di spingere al massimo le velocità a di
 ![sweep test - delay 1ms NPLC](../media/currrent_sweep_test_1ms._npcl.png)
 
 Putroppo neppure impostando il valore minimo consentito `nplc=0.01` si riesce ad ottenre un intervallo campionamento costante di 1ms
-![sweep test deplay 1ms NPLC](../media/currrent_sweep_test_1ms._npcl_RC_load.png) 
+![sweep test deplay 1ms NPLC](../media/currrent_sweep_test_1ms._npcl_RC_load.png)
 
 ![sweep test - delay 1ms]
 

@@ -9,3 +9,7 @@ Scopo del progetto è verificare sperimentalmente la possibilità di eseguire un
 [frequency sweep signal generator](docs/frequency-sweep-signal-generator.md)
 
 [Keithley 2450 remote operations](docs/keithley-2450-remote.md)
+
+[Save data](docs/save-data.md)
+
+[Electrochemical Impedance Spectroscopy (EIS)](docs/electrochemical-Impedance-spectroscopy.md)
