@@ -1,6 +1,6 @@
 TST Builder
 
-Load TSP remotly
+Load TSP script  remotly
 
 Py-Visa
 
