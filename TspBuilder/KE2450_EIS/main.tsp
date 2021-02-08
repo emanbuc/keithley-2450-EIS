@@ -66,10 +66,10 @@ exportBufferToFile content to file
 function exportBufferToFile(fileName,sourceLabel,readingLabel)
  file_num = file.open(fileName,file.MODE_WRITE)
  if file_num != nil then
-	file.write(file_num,string.format("Timestamp;%s;%s \r\n",sourceLabel,readingLabel))
+	file.write(file_num,string.format("Timestamp;%s;%s\r\n",sourceLabel,readingLabel))
 	
 	for i=1,defbuffer1.n do
-		file.write(file_num,string.format("%s;%g;%g \r\n",defbuffer1.timestamps[i],defbuffer1.sourcevalues[i], defbuffer1.readings[i]))
+		file.write(file_num,string.format("%s;%g;%g\r\n",defbuffer1.timestamps[i],defbuffer1.sourcevalues[i], defbuffer1.readings[i]))
 	end
 	file.close(file_num)
  end
@@ -184,14 +184,32 @@ while sweep[sweepIndex] do
 end
 
 
-print("                 _ ");
-print("                | |");
-print("   ___ _ __   __| |");
-print("  / _ \ '_ \ / _\` |");
-print(" |  __/ | | | (_| |");
-print("  \___|_| |_|\__,_|");
-print("                   ");
-print("                   ");
+
+print("                                                                                                                                            ")
+print("                                                                                                                                            ")
+print("TTTTTTTTTTTTTTTTTTTTTTTHHHHHHHHH     HHHHHHHHHEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEENNNNNNNN        NNNNNNNNDDDDDDDDDDDDD        ")
+print("T:::::::::::::::::::::TH:::::::H     H:::::::HE::::::::::::::::::::E     E::::::::::::::::::::EN:::::::N       N::::::ND::::::::::::DDD     ")
+print("T:::::::::::::::::::::TH:::::::H     H:::::::HE::::::::::::::::::::E     E::::::::::::::::::::EN::::::::N      N::::::ND:::::::::::::::DD   ")
+print("T:::::TT:::::::TT:::::THH::::::H     H::::::HHEE::::::EEEEEEEEE::::E     EE::::::EEEEEEEEE::::EN:::::::::N     N::::::NDDD:::::DDDDD:::::D  ")
+print("TTTTTT  T:::::T  TTTTTT  H:::::H     H:::::H    E:::::E       EEEEEE       E:::::E       EEEEEEN::::::::::N    N::::::N  D:::::D    D:::::D ")
+print("        T:::::T          H:::::H     H:::::H    E:::::E                    E:::::E             N:::::::::::N   N::::::N  D:::::D     D:::::D")
+print("        T:::::T          H::::::HHHHH::::::H    E::::::EEEEEEEEEE          E::::::EEEEEEEEEE   N:::::::N::::N  N::::::N  D:::::D     D:::::D")
+print("        T:::::T          H:::::::::::::::::H    E:::::::::::::::E          E:::::::::::::::E   N::::::N N::::N N::::::N  D:::::D     D:::::D")
+print("        T:::::T          H:::::::::::::::::H    E:::::::::::::::E          E:::::::::::::::E   N::::::N  N::::N:::::::N  D:::::D     D:::::D")
+print("        T:::::T          H::::::HHHHH::::::H    E::::::EEEEEEEEEE          E::::::EEEEEEEEEE   N::::::N   N:::::::::::N  D:::::D     D:::::D")
+print("        T:::::T          H:::::H     H:::::H    E:::::E                    E:::::E             N::::::N    N::::::::::N  D:::::D     D:::::D")
+print("        T:::::T          H:::::H     H:::::H    E:::::E       EEEEEE       E:::::E       EEEEEEN::::::N     N:::::::::N  D:::::D    D:::::D ")
+print("      TT:::::::TT      HH::::::H     H::::::HHEE::::::EEEEEEEE:::::E     EE::::::EEEEEEEE:::::EN::::::N      N::::::::NDDD:::::DDDDD:::::D  ")
+print("      T:::::::::T      H:::::::H     H:::::::HE::::::::::::::::::::E     E::::::::::::::::::::EN::::::N       N:::::::ND:::::::::::::::DD   ")
+print("      T:::::::::T      H:::::::H     H:::::::HE::::::::::::::::::::E     E::::::::::::::::::::EN::::::N        N::::::ND::::::::::::DDD     ")
+print("      TTTTTTTTTTT      HHHHHHHHH     HHHHHHHHHEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEENNNNNNNN         NNNNNNNDDDDDDDDDDDDD        ")
+print("                                                                                                                                            ")
+print("                                                                                                                                            ")
+print("                                                                                                                                            ")
+print("                                                                                                                                            ")
+print("                                                                                                                                            ")
+print("                                                                                                                                            ")
+print("                                                                                                                                            ")
 
 
 
