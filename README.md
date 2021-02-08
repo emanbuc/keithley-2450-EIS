@@ -13,3 +13,8 @@ Scopo del progetto è verificare sperimentalmente la possibilità di eseguire un
 [Save data](docs/save-data.md)
 
 [Electrochemical Impedance Spectroscopy (EIS)](docs/electrochemical-Impedance-spectroscopy.md)
+
+Todo:
+- step sine con frequenze dell'articolo: 0.05, 0.1, 0.2, 0.4, 1, 2,4,10,20,40 con - 10mA  prendere almeno un perido per ogni segnale. Provare 100sec per ogni step
+  - RC
+  - Batteria

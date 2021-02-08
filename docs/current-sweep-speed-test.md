@@ -71,8 +71,10 @@ Per cercare indagare sulla possibilità di spingere al massimo le velocità a di
 Putroppo neppure impostando il valore minimo consentito `nplc=0.01` si riesce ad ottenre un intervallo campionamento costante di 1ms
 ![sweep test deplay 1ms NPLC](../media/currrent_sweep_test_1ms._npcl_RC_load.png)
 
-![sweep test - delay 1ms]
+
+
 
 ### Conclusioni
 
-Non è stato possibile generare un segnale in corrente e misurare la sensione con intervalli di campionamento precisi al di sotto di alcuni ms.
+è stato possibile generare un segnale in corrente e misurare la tensione ai capi del DUT in maniiera accurata solo per intervalli di campionamento a partire 10ms.
+Lo strumento non riesce ad eseguire misure con intervallo inferiore a qualche ms.

@@ -81,38 +81,30 @@ local A = 1e-3 -- current signal amplitude [A]
 local po=0 -- phase offset
 local b = 0 -- DC bias
 local N = 1000 -- signal lengh (sample number)
+local signalDuration = 10 -- seconds 100
 
 -- ======================================
 --  GENERATE CURRENT SIGNAL ---
 -- --------------------------------------
+local N= math.floor(signalDuration/sampleTime)
+print(string.format("For signal duration %g must be generated %g sample",N))
 
-
-
--- Frequency sweep calculation
--- 
-local stepN = math.floor((freqSweepStop - freqSweepStart)/freqSweepStep)
-print("Frequency sweep. start: %g, stop: %g , step: %g",freqSweepStart,freqSweepStop,freqSweepStep)
-local sweep = generateFreqSweep(freqSweepStart,freqSweepStop,freqSweepStep)
-for sweepIndex=0,stepN do print(sweep[sweepIndex]) end
-
-
+-- frequency sweep
+local sweep = {0.05, 0.1, 0.2, 0.4, 1, 2,4,10,20,40}
 
 -- signal generation
---
 
 local currentLevels = {}
 local signalSampleIndex=0
 
-for sweepIndex=0,stepN do	
+for sweepIndex=0,sweep.n do	
 	local freq = sweep[sweepIndex]
 	print("generate signal")
 	print(string.format("frequency sweep index: %g - freq: %g", sweepIndex,freq))
 	
-	--local signalPeriod = 1/signalFrequency
-	--local N= math.floor(signalPeriod/sampleTime)
+	local signalPeriod = 1/freq -- s
 
---	local generatedSignal = generateSinusoidalSignalSampleBased(sampleTime,freq,N,A,po,b)
-	local generatedSignal = generateSinusoidalSignal(sampleTime,freq,A,po,b)
+    local generatedSignal = generateSinusoidalSignalSampleBased(sampleTime,freq,N,A,po,b)
 	
 	for i, value in generatedSignal do
 		currentLevels[signalSampleIndex]= value
