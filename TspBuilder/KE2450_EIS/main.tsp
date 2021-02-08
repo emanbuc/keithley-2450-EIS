@@ -150,7 +150,7 @@ local sampleTime = 0.01 -- output signal sampling period [s]
 local A = 1e-3 -- current signal amplitude [A]
 local po=0 -- phase offset
 local b = 0 -- DC bias
-local signalDuration = 10 -- seconds 100
+local signalDuration = 100 -- seconds 100
 
 local N= math.floor(signalDuration/sampleTime)
 print(string.format("For signal duration %g seconds must be generated %g sample",signalDuration,N))
@@ -185,33 +185,14 @@ end
 
 
 
-print("                                                                                                                                            ")
-print("                                                                                                                                            ")
-print("TTTTTTTTTTTTTTTTTTTTTTTHHHHHHHHH     HHHHHHHHHEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEENNNNNNNN        NNNNNNNNDDDDDDDDDDDDD        ")
-print("T:::::::::::::::::::::TH:::::::H     H:::::::HE::::::::::::::::::::E     E::::::::::::::::::::EN:::::::N       N::::::ND::::::::::::DDD     ")
-print("T:::::::::::::::::::::TH:::::::H     H:::::::HE::::::::::::::::::::E     E::::::::::::::::::::EN::::::::N      N::::::ND:::::::::::::::DD   ")
-print("T:::::TT:::::::TT:::::THH::::::H     H::::::HHEE::::::EEEEEEEEE::::E     EE::::::EEEEEEEEE::::EN:::::::::N     N::::::NDDD:::::DDDDD:::::D  ")
-print("TTTTTT  T:::::T  TTTTTT  H:::::H     H:::::H    E:::::E       EEEEEE       E:::::E       EEEEEEN::::::::::N    N::::::N  D:::::D    D:::::D ")
-print("        T:::::T          H:::::H     H:::::H    E:::::E                    E:::::E             N:::::::::::N   N::::::N  D:::::D     D:::::D")
-print("        T:::::T          H::::::HHHHH::::::H    E::::::EEEEEEEEEE          E::::::EEEEEEEEEE   N:::::::N::::N  N::::::N  D:::::D     D:::::D")
-print("        T:::::T          H:::::::::::::::::H    E:::::::::::::::E          E:::::::::::::::E   N::::::N N::::N N::::::N  D:::::D     D:::::D")
-print("        T:::::T          H:::::::::::::::::H    E:::::::::::::::E          E:::::::::::::::E   N::::::N  N::::N:::::::N  D:::::D     D:::::D")
-print("        T:::::T          H::::::HHHHH::::::H    E::::::EEEEEEEEEE          E::::::EEEEEEEEEE   N::::::N   N:::::::::::N  D:::::D     D:::::D")
-print("        T:::::T          H:::::H     H:::::H    E:::::E                    E:::::E             N::::::N    N::::::::::N  D:::::D     D:::::D")
-print("        T:::::T          H:::::H     H:::::H    E:::::E       EEEEEE       E:::::E       EEEEEEN::::::N     N:::::::::N  D:::::D    D:::::D ")
-print("      TT:::::::TT      HH::::::H     H::::::HHEE::::::EEEEEEEE:::::E     EE::::::EEEEEEEE:::::EN::::::N      N::::::::NDDD:::::DDDDD:::::D  ")
-print("      T:::::::::T      H:::::::H     H:::::::HE::::::::::::::::::::E     E::::::::::::::::::::EN::::::N       N:::::::ND:::::::::::::::DD   ")
-print("      T:::::::::T      H:::::::H     H:::::::HE::::::::::::::::::::E     E::::::::::::::::::::EN::::::N        N::::::ND::::::::::::DDD     ")
-print("      TTTTTTTTTTT      HHHHHHHHH     HHHHHHHHHEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEENNNNNNNN         NNNNNNNDDDDDDDDDDDDD        ")
-print("                                                                                                                                            ")
-print("                                                                                                                                            ")
-print("                                                                                                                                            ")
-print("                                                                                                                                            ")
-print("                                                                                                                                            ")
-print("                                                                                                                                            ")
-print("                                                                                                                                            ")
-
-
+print(" ______  __ __    ___        ___  ____   ___   ")
+print("|      ||  |  |  /  _]      /  _]|    \ |   \  ")
+print("|      ||  |  | /  [_      /  [_ |  _  ||    \ ")
+print("|_|  |_||  _  ||    _]    |    _]|  |  ||  D  |")
+print("  |  |  |  |  ||   [_     |   [_ |  |  ||     |")
+print("  |  |  |  |  ||     |    |     ||  |  ||     |")
+print("  |__|  |__|__||_____|    |_____||__|__||_____|")
+print("                                               ")
 
 
 
