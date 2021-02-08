@@ -1,41 +1,26 @@
--- ==============================================
-
-function generateFreqSweep(freqSweepStart,freqSweepStop,freqSweepStep)
-	local freqSweep = {}
-	local next = freqSweepStart
-	local fIndex = 0
-	
-	while next <= freqSweepStop do
-		freqSweep[fIndex] = next
-		next = next+freqSweepStep
-		fIndex = fIndex+1
-	end
-	return freqSweep
-end
 
 
+--[[
+ __ __  ______  ____  _      ____  ______  __ __      _____  __ __  ____     __ ______  ____  ___   ____   _____
+|  |  ||      ||    || |    |    ||      ||  |  |    |     ||  |  ||    \   /  ]      ||    |/   \ |    \ / ___/
+|  |  ||      | |  | | |     |  | |      ||  |  |    |   __||  |  ||  _  | /  /|      | |  ||     ||  _  (   \_ 
+|  |  ||_|  |_| |  | | |___  |  | |_|  |_||  ~  |    |  |_  |  |  ||  |  |/  / |_|  |_| |  ||  O  ||  |  |\__  |
+|  :  |  |  |   |  | |     | |  |   |  |  |___, |    |   _] |  :  ||  |  /   \_  |  |   |  ||     ||  |  |/  \ |
+|     |  |  |   |  | |     | |  |   |  |  |     |    |  |   |     ||  |  \     | |  |   |  ||     ||  |  |\    |
+ \__,_|  |__|  |____||_____||____|  |__|  |____/     |__|    \__,_||__|__|\____| |__|  |____|\___/ |__|__| \___|
+                                                                                                                
+--]]
 
--- Generate sine wave
--- A is the amplitude of the sine wave.
--- b is the signal bias
--- po is the offset (phase shift) of the signal.
--- sampleTime: Specify the sample period in seconds 
--- reference: https://it.mathworks.com/help/simulink/slref/sinewavefunction.html
+--[[  Generate discrete time sine wave
+ sampleTime: Specify the sample period in seconds 
+ signalFrequency: frequency of sine wave
+ A is the amplitude of the sine wave.
+ N sample number
+ b is the signal bias
+ po is the offset (phase shift) of the signal.
 
-function generateSinusoidalSignal(sampleTime,signalFrequency,A,po,b)
-	print(string.format("signal frequency %g",signalFrequency))
-	local signalPeriod = 1/signalFrequency
-	local p= math.floor(signalPeriod/sampleTime) -- p is the number of time samples per sine wave period
- 
-	local signal = {}    -- new array
-	for k=0,p-1 do 
-		--k is a repeating integer value that ranges from 0 to p-1
-		-- y=Asin(2pi(k+o)/p)+b
-		signal[k]=A*math.sin(2*math.pi*(k+po)/p)+b
-	end
-	return signal
-end
-
+ reference: https://it.mathworks.com/help/simulink/slref/sinewavefunction.html
+--]]
 function generateSinusoidalSignalSampleBased(sampleTime,signalFrequency,N,A,po,b)
 	print(string.format("signal frequency %g",signalFrequency))
 	local signal = {}    -- new array
@@ -45,6 +30,9 @@ function generateSinusoidalSignalSampleBased(sampleTime,signalFrequency,N,A,po,b
 	return signal
 end
 
+--[[  ==========================================================
+save table content to file
+-- ]]
 function saveToFile(dataFileName, samples)
 	file_num = file.open(dataFileName,file.MODE_WRITE)
 	if file_num != nil then
@@ -58,130 +46,156 @@ function saveToFile(dataFileName, samples)
 	end
 end
 
--- ========================================
--- SETTING
-
-local sourceDelay = 0 -- [s]
-local delay = 0.1 -- [s]
-local nplc = 0.01 -- range from 0.01 to 10 , default 1
-local fileName = "sweep_test_R10K_load.csv"
-local currentSignalFileName = "current_sweep_timebased.csv"
-local repetition = 1
-
--- Frequency sweep configuration
---
-local freqSweepStart = 0.1
-local freqSweepStop = 0.2
-local freqSweepStep = 0.1
-
---  sinusoidal waveform parameters
--- 
-local sampleTime = 0.1 -- output signal sampling period [s]
-local A = 1e-3 -- current signal amplitude [A]
-local po=0 -- phase offset
-local b = 0 -- DC bias
-local N = 1000 -- signal lengh (sample number)
-local signalDuration = 10 -- seconds 100
-
--- ======================================
---  GENERATE CURRENT SIGNAL ---
--- --------------------------------------
-local N= math.floor(signalDuration/sampleTime)
-print(string.format("For signal duration %g must be generated %g sample",N))
-
--- frequency sweep
-local sweep = {0.05, 0.1, 0.2, 0.4, 1, 2,4,10,20,40}
-
--- signal generation
-
-local currentLevels = {}
-local signalSampleIndex=0
-
-for sweepIndex=0,sweep.n do	
-	local freq = sweep[sweepIndex]
-	print("generate signal")
-	print(string.format("frequency sweep index: %g - freq: %g", sweepIndex,freq))
-	
-	local signalPeriod = 1/freq -- s
-
-    local generatedSignal = generateSinusoidalSignalSampleBased(sampleTime,freq,N,A,po,b)
-	
-	for i, value in generatedSignal do
-		currentLevels[signalSampleIndex]= value
-		signalSampleIndex = signalSampleIndex+1
-	end		
-end
-
-
-print("Save current signal  to file")
-saveToFile(currentSignalFileName,currentLevels)
-
---
---Reset the instrument
---
-
-
-reset()
-defbuffer1.clear()
-
-print("start programming instrument")
-
-smu.source.configlist.create("CurrentListSweep")
-smu.source.func = smu.FUNC_DC_CURRENT
---smu.source.range = 10
-smu.source.vlimit.level = 21
-for index = 1, table.getn(currentLevels) do
-smu.source.level = currentLevels[index]
-smu.source.configlist.store("CurrentListSweep")
-end
-
---
---Source Settings
---
-smu.source.func = smu.FUNC_DC_CURRENT
-smu.source.vlimit.level = 21
-smu.source.range = 10e-3
-smu.source.delay = sourceDelay
-smu.source.readback = smu.OFF
-
---
---Measure Settings
---
-smu.measure.func = smu.FUNC_DC_VOLTAGE
-smu.measure.range = 10
-smu.measure.nplc = nplc
-smu.measure.sense=smu.SENSE_4WIRE
-smu.measure.autozero.enable = smu.OFF
-smu.measure.autozero.once()
-
-print(string.format("configure sweeplist current Sweep delay: %g , repetition: %g",delay, repetition))
-smu.source.sweeplist("CurrentListSweep", 1,delay,repetition)
-
-print("RUN TRIGGER >>>>>>")
---Run trigger model and wait for it to complete
-trigger.model.initiate()
-waitcomplete()
-print(">>>>> END ")
-
-print("getting raw data ....")
-
---Print Results
-if defbuffer1.n == 0 then
+--[[  ===========================================================
+print buffer content to console
+-- ]]
+function printBuffer(sourceLabel,readingLabel)
+ if defbuffer1.n == 0 then
 	print("Buffer is empty\n")
-else
-	print("Time,Current,Voltage")
+ else
+	print(string.format("Timestamp,%s,%s",sourceLabel,readingLabel))
 	for i=1,defbuffer1.n do
 		print(string.format("%s,%g,%g",defbuffer1.timestamps[i],defbuffer1.sourcevalues[i], defbuffer1.readings[i]))
 	end
+ end
 end
 
--- save to file
-print("Save data to file")
-file_num = file.open(fileName,file.MODE_WRITE)
-if file_num != nil then
-	print("Time;Current;Voltage")
+--[[  ===========================================================
+exportBufferToFile content to file
+-- ]]
+function exportBufferToFile(fileName,sourceLabel,readingLabel)
+ file_num = file.open(fileName,file.MODE_WRITE)
+ if file_num != nil then
+	file.write(file_num,string.format("Timestamp;%s;%s \r\n",sourceLabel,readingLabel))
+	
 	for i=1,defbuffer1.n do
 		file.write(file_num,string.format("%s;%g;%g \r\n",defbuffer1.timestamps[i],defbuffer1.sourcevalues[i], defbuffer1.readings[i]))
 	end
 	file.close(file_num)
+ end
 end
+
+--[[  ========================================================================================
+Source current and measure voltage.
+Current source signal generated from list of values using sweeplist
+-- ]]
+function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition)
+ reset()
+ defbuffer1.clear()
+
+ print("start programming instrument")
+
+ smu.source.configlist.create("CurrentListSweep")
+ smu.source.func = smu.FUNC_DC_CURRENT
+ smu.source.vlimit.level = 21
+ for index = 1, table.getn(currentLevels) do
+  smu.source.level = currentLevels[index]
+  smu.source.configlist.store("CurrentListSweep")
+ end
+
+--
+--Source Settings
+--
+ smu.source.func = smu.FUNC_DC_CURRENT
+ smu.source.vlimit.level = 21
+ smu.source.range = 10e-3
+ smu.source.delay = sourceDelay
+ smu.source.readback = smu.OFF
+
+--
+--Measure Settings
+--
+ smu.measure.func = smu.FUNC_DC_VOLTAGE
+ smu.measure.range = 10
+ smu.measure.nplc = nplc
+ smu.measure.sense=smu.SENSE_4WIRE
+ smu.measure.autozero.enable = smu.OFF
+ smu.measure.autozero.once()
+
+ print(string.format("configure sweeplist current Sweep delay: %g , repetition: %g",delay, repetition))
+ smu.source.sweeplist("CurrentListSweep", 1,delay,repetition)
+
+ print("running trigger model ...")
+
+ --Run trigger model and wait for it to complete
+ trigger.model.initiate()
+ waitcomplete()
+ print("trigger model completed")
+end
+
+
+--[[ ========================================================================================================
+  __  __          _____ _   _ 
+ |  \/  |   /\   |_   _| \ | |
+ | \  / |  /  \    | | |  \| |
+ | |\/| | / /\ \   | | | . ` |
+ | |  | |/ ____ \ _| |_| |\  |
+ |_|  |_/_/    \_\_____|_| \_|
+                              
+                              
+--]]
+
+-- experiment parameters
+local sourceDelay = 0 -- [s]
+local delay = 0.01 -- [s]
+local nplc = 0.01 -- range from 0.01 to 10 , default 1
+local resultFileNamePrefix = "test_RC_load"
+local sourceFilenamePrefix = "generatedCurrentLevel"
+local sourceLabel = "Current"
+local readingLabel = "Voltage"
+local repetition = 1
+
+--  sinusoidal waveform parameters
+local sampleTime = 0.01 -- output signal sampling period [s]
+local A = 1e-3 -- current signal amplitude [A]
+local po=0 -- phase offset
+local b = 0 -- DC bias
+local signalDuration = 10 -- seconds 100
+
+local N= math.floor(signalDuration/sampleTime)
+print(string.format("For signal duration %g seconds must be generated %g sample",signalDuration,N))
+
+-- frequency sweep
+local sweep = {0.05, 0.1, 0.2, 0.4, 1, 2,4,10,20,40}
+
+local sweepIndex =1 -- in lua indexes start from 1
+while sweep[sweepIndex] do	
+	local freq = sweep[sweepIndex]
+	print("generate signal")
+	print(string.format("frequency sweep index: %g - freq: %g", sweepIndex,freq))
+	
+    local currentLevels = generateSinusoidalSignalSampleBased(sampleTime,freq,N,A,po,b)
+    
+    print("Save current signal  to file")
+    local sourceFilename = string.format("%s_%g.csv",sourceFilenamePrefix,freq)
+	saveToFile(sourceFilename,currentLevels)
+	
+	print("doSourceCurrentSweepMeasureVoltage ...")
+	doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition)
+	print(" doSourceCurrentSweepMeasureVoltage completed")
+	sweepIndex=sweepIndex+1	
+	
+	printBuffer(sourceLabel,readingLabel)
+	
+	print("saving data to file ...")
+	local resultFileName = string.format("%s_%g.csv",resultFileNamePrefix,freq)
+    exportBufferToFile(resultFileName,sourceLabel,readingLabel)
+    print("saving completed")
+end
+
+
+print("                 _ ");
+print("                | |");
+print("   ___ _ __   __| |");
+print("  / _ \ '_ \ / _\` |");
+print(" |  __/ | | | (_| |");
+print("  \___|_| |_|\__,_|");
+print("                   ");
+print("                   ");
+
+
+
+
+
+
+
