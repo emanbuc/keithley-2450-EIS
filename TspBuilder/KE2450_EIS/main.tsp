@@ -100,7 +100,7 @@ function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay
  smu.source.vlimit.level = 21
  smu.source.range = 10e-3
  smu.source.delay = sourceDelay
- smu.source.readback = smu.OFF
+ smu.source.readback = smu.ON
 
 --
 --Measure Settings
@@ -137,16 +137,16 @@ end
 
 -- experiment parameters
 local sourceDelay = 0 -- [s]
-local delay = 0.01 -- [s]
+local delay = 0.1 -- [s]
 local nplc = 0.01 -- range from 0.01 to 10 , default 1
-local resultFileNamePrefix = "test_RC_load"
+local resultFileNamePrefix = "test_battery_readback"
 local sourceFilenamePrefix = "generatedCurrentLevel"
 local sourceLabel = "Current"
 local readingLabel = "Voltage"
 local repetition = 1
 
 --  sinusoidal waveform parameters
-local sampleTime = 0.01 -- output signal sampling period [s]
+local sampleTime = 0.1 -- output signal sampling period [s]
 local A = 10e-3 -- current signal amplitude [A]
 local po=0 -- phase offset
 local b = 0 -- DC bias
