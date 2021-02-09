@@ -25,7 +25,7 @@ function generateSinusoidalSignalSampleBased(sampleTime,signalFrequency,N,A,po,b
 	print(string.format("signal frequency %g",signalFrequency))
 	local signal = {}    -- new array
 	for k=0,N-1 do 
-		signal[k]=A*math.sin(2*math.pi*k*sampleTime+po)+b
+		signal[k]=A*math.sin(2*math.pi*k*signalFrequency*sampleTime+po)+b
 	end
 	return signal
 end
@@ -139,7 +139,7 @@ end
 local sourceDelay = 0 -- [s]
 local delay = 0.1 -- [s]
 local nplc = 0.01 -- range from 0.01 to 10 , default 1
-local resultFileNamePrefix = "test_battery_readback"
+local resultFileNamePrefix = "test_RC_load_readback_100ms"
 local sourceFilenamePrefix = "generatedCurrentLevel"
 local sourceLabel = "Current"
 local readingLabel = "Voltage"
@@ -147,8 +147,8 @@ local repetition = 1
 
 --  sinusoidal waveform parameters
 local sampleTime = 0.1 -- output signal sampling period [s]
-local A = 10e-3 -- current signal amplitude [A]
-local po=0 -- phase offset
+local A = 1e-3 -- current signal amplitude [A]
+local po=0.01 -- phase offset
 local b = 0 -- DC bias
 local signalDuration = 100 -- seconds 100
 
