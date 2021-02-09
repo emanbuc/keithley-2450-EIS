@@ -139,7 +139,7 @@ end
 local sourceDelay = 0 -- [s]
 local delay = 0.1 -- [s]
 local nplc = 0.01 -- range from 0.01 to 10 , default 1
-local resultFileNamePrefix = "test_RC_load_readback_100ms"
+local resultFileNamePrefix = "test_battery_readback_100ms"
 local sourceFilenamePrefix = "generatedCurrentLevel"
 local sourceLabel = "Current"
 local readingLabel = "Voltage"
