@@ -147,7 +147,7 @@ local repetition = 1
 
 --  sinusoidal waveform parameters
 local sampleTime = 0.01 -- output signal sampling period [s]
-local A = 1e-3 -- current signal amplitude [A]
+local A = 10e-3 -- current signal amplitude [A]
 local po=0 -- phase offset
 local b = 0 -- DC bias
 local signalDuration = 100 -- seconds 100
