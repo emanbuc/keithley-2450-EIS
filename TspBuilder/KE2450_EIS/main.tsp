@@ -106,7 +106,7 @@ function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay
 --Measure Settings
 --
  smu.measure.func = smu.FUNC_DC_VOLTAGE
- smu.measure.range = 10
+ smu.measure.range = 21
  smu.measure.nplc = nplc
  smu.measure.sense=smu.SENSE_4WIRE
  smu.measure.autozero.enable = smu.OFF
@@ -139,24 +139,24 @@ end
 local sourceDelay = 0 -- [s]
 local delay = 0.1 -- [s]
 local nplc = 0.01 -- range from 0.01 to 10 , default 1
-local resultFileNamePrefix = "test_RC_load_readback_100ms"
-local sourceFilenamePrefix = "generatedCurrentLevel"
+local resultFileNamePrefix = "test_RC_load_readback_100ms_DC"
+local sourceFilenamePrefix = "generatedCurrent_100ms_DC"
 local sourceLabel = "Current"
 local readingLabel = "Voltage"
 local repetition = 1
 
 --  sinusoidal waveform parameters
-local sampleTime = 0.1 -- output signal sampling period [s]
+local sampleTime = delay -- output signal sampling period [s]
 local A = 10e-3 -- current signal amplitude [A]
 local po=0.01 -- phase offset
-local b = 0 -- DC bias
+local b = 10.5e-3 -- DC bias
 local signalDuration = 100 -- seconds 100
 
 local N= math.floor(signalDuration/sampleTime)
 print(string.format("For signal duration %g seconds must be generated %g sample",signalDuration,N))
 
 -- frequency sweep
-local sweep = {0.05, 0.1, 0.2, 0.4, 1, 2} --,4,10,20,40}
+local sweep = {0.05, 0.1, 0.2, 0.4}-- 1, 2 ,4,10,20,40}
 
 local sweepIndex =1 -- in lua indexes start from 1
 while sweep[sweepIndex] do	
