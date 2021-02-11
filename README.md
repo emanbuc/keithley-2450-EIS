@@ -2,7 +2,15 @@
 
 Scopo del progetto è verificare sperimentalmente la possibilità di eseguire un EIS utilizzando lo strumento smu Keithley 2450. Questo tipo di esame non è tra le applicazioni riportate nelle documentazione, ma almeno in teoria i dati di targa dovrebbero permettere la misura, almeno per basse frequenze.
 
+Commercial instruments are available that can measure impedances from mΩ to TΩ and over frequencies from μHz to MHz.
+
+The measurement of battery impedance is crucial for online monitoring of State of Charge and State of Health [1]
+
+[Electrochemical Impedance Spectroscopy (EIS)](docs/electrochemical-Impedance-spectroscopy.md)
+
 [current sweep speed test](docs/current-sweep-speed-test.md)
+
+Limitation of Keithley 2450 for EIS - TBD 
 
 [sinusoidal signal generator](docs/sinusoidal-signal-generator.md)
 
@@ -12,7 +20,12 @@ Scopo del progetto è verificare sperimentalmente la possibilità di eseguire un
 
 [Save data](docs/save-data.md)
 
-[Electrochemical Impedance Spectroscopy (EIS)](docs/electrochemical-Impedance-spectroscopy.md)
+Data from Resistive load
+
+Data from RC load
+
+Data from Li-On Battery
+
 
 ## Todo
 
