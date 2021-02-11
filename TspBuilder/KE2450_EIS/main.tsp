@@ -1,6 +1,6 @@
 
 
---[[
+--[[ ============================================================================================================
  __ __  ______  ____  _      ____  ______  __ __      _____  __ __  ____     __ ______  ____  ___   ____   _____
 |  |  ||      ||    || |    |    ||      ||  |  |    |     ||  |  ||    \   /  ]      ||    |/   \ |    \ / ___/
 |  |  ||      | |  | | |     |  | |      ||  |  |    |   __||  |  ||  _  | /  /|      | |  ||     ||  _  (   \_ 
@@ -124,7 +124,40 @@ function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay
 end
 
 
---[[ ========================================================================================================
+
+--[[ ===========================================================================================================
+  ______                      _                      _     _____                               _                
+ |  ____|                    (_)                    | |   |  __ \                             | |               
+ | |__  __  ___ __   ___ _ __ _ _ __ ___   ___ _ __ | |_  | |__) |_ _ _ __ __ _ _ __ ___   ___| |_ ___ _ __ ___ 
+ |  __| \ \/ / '_ \ / _ \ '__| | '_ ` _ \ / _ \ '_ \| __| |  ___/ _` | '__/ _` | '_ ` _ \ / _ \ __/ _ \ '__/ __|
+ | |____ >  <| |_) |  __/ |  | | | | | | |  __/ | | | |_  | |  | (_| | | | (_| | | | | | |  __/ ||  __/ |  \__ \
+ |______/_/\_\ .__/ \___|_|  |_|_| |_| |_|\___|_| |_|\__| |_|   \__,_|_|  \__,_|_| |_| |_|\___|\__\___|_|  |___/
+             | |                                                                                                
+             |_|                                                                                                
+--]]
+
+
+-- experiment parameters
+local sourceDelay = 0 -- [s]
+local delay = 0.01 -- [s]
+local nplc = 0.01 -- range from 0.01 to 10 , default 1
+local resultFileNamePrefix = "test_battery_readback_10ms"
+local sourceFilenamePrefix = "generatedCurrent_10ms"
+local sourceLabel = "Current"
+local readingLabel = "Voltage"
+local repetition = 1
+
+--  sinusoidal waveform parameters
+local sampleTime = delay -- output signal sampling period [s]
+local A = 0.010 -- current signal amplitude [A]
+local po=0.01 -- phase offset
+local b = 0 -- DC bias
+local signalDuration = 100 -- seconds 100
+
+-- frequency sweep
+local sweep = {0.05,0.1,0.2,0.4,1,2,4,10,20,40}
+
+--[[ =========================================================================================================
   __  __          _____ _   _ 
  |  \/  |   /\   |_   _| \ | |
  | \  / |  /  \    | | |  \| |
@@ -132,31 +165,10 @@ end
  | |  | |/ ____ \ _| |_| |\  |
  |_|  |_/_/    \_\_____|_| \_|
                               
-                              
 --]]
-
--- experiment parameters
-local sourceDelay = 0 -- [s]
-local delay = 0.1 -- [s]
-local nplc = 0.01 -- range from 0.01 to 10 , default 1
-local resultFileNamePrefix = "test_RC_load_readback_100ms_DC"
-local sourceFilenamePrefix = "generatedCurrent_100ms_DC"
-local sourceLabel = "Current"
-local readingLabel = "Voltage"
-local repetition = 1
-
---  sinusoidal waveform parameters
-local sampleTime = delay -- output signal sampling period [s]
-local A = 10e-3 -- current signal amplitude [A]
-local po=0.01 -- phase offset
-local b = 10.5e-3 -- DC bias
-local signalDuration = 100 -- seconds 100
 
 local N= math.floor(signalDuration/sampleTime)
 print(string.format("For signal duration %g seconds must be generated %g sample",signalDuration,N))
-
--- frequency sweep
-local sweep = {0.05, 0.1, 0.2, 0.4}-- 1, 2 ,4,10,20,40}
 
 local sweepIndex =1 -- in lua indexes start from 1
 while sweep[sweepIndex] do	
