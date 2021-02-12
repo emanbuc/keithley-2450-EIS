@@ -79,7 +79,7 @@ end
 Source current and measure voltage.
 Current source signal generated from list of values using sweeplist
 -- ]]
-function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition,measureRange)
+function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition,measureRange,sourceRange)
  reset()
  defbuffer1.clear()
 
@@ -97,15 +97,18 @@ function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay
 --Source Settings
 --
  smu.source.func = smu.FUNC_DC_CURRENT
- smu.source.vlimit.level = 21
- smu.source.range = 10e-3
- smu.source.delay = sourceDelay
  smu.source.readback = smu.ON
+ smu.source.vlimit.level = 21
+ smu.source.autorange = smu.OFF
+ smu.source.range = sourceRange
+ smu.source.delay = sourceDelay
+
 
 --
 --Measure Settings
 --
  smu.measure.func = smu.FUNC_DC_VOLTAGE
+ smu.measure.autorange = smu.OFF
  smu.measure.range = measureRange
  smu.measure.nplc = nplc
  smu.measure.sense=smu.SENSE_4WIRE
@@ -139,14 +142,15 @@ end
 
 -- experiment parameters
 local sourceDelay = 0 -- [s]
-local delay = 0.01 -- [s]
+local delay = 0.1 -- [s]
 local nplc = 0.01 -- range from 0.01 to 10 , default 1
-local resultFileNamePrefix = "test_battery_readback_10ms_10ma"
-local sourceFilenamePrefix = "generatedCurrent_10ms_10ma"
+local resultFileNamePrefix = "test_battery_readback_100ms_1ma_autorangeOFF"
+local sourceFilenamePrefix = "generatedCurrent_100ms_1ma_autorangeOFF"
 local sourceLabel = "Current"
 local readingLabel = "Voltage"
 local repetition = 1
-local measureRange = 5 --V
+local measureRange = 5 --[V]  The fixed voltage source ranges are  20 mV, 200 mV, 2 V, 20 V, and 200 V.
+local sourceRange = 0.001 --[A] The fixed current source ranges are 10 nA, 100 nA, 1 microA, 10 microA, 100 microA, 1 mA, 10 mA, 100 mA, and 1 A
 
 --  sinusoidal waveform parameters
 local sampleTime = delay -- output signal sampling period [s]
@@ -184,7 +188,7 @@ while sweep[sweepIndex] do
 	saveToFile(sourceFilename,currentLevels)
 	
 	print("doSourceCurrentSweepMeasureVoltage ...")
-	doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition,measureRange)
+	doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition,measureRange,sourceRange)
 	print(" doSourceCurrentSweepMeasureVoltage completed")
 	sweepIndex=sweepIndex+1	
 	
