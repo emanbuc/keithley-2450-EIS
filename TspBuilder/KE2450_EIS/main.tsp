@@ -85,14 +85,6 @@ function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay
 
  print("start programming instrument")
 
- smu.source.configlist.create("CurrentListSweep")
- smu.source.func = smu.FUNC_DC_CURRENT
- smu.source.vlimit.level = 21
- for index = 1, table.getn(currentLevels) do
-  smu.source.level = currentLevels[index]
-  smu.source.configlist.store("CurrentListSweep")
- end
-
 --
 --Source Settings
 --
@@ -112,9 +104,21 @@ function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay
  smu.measure.range = measureRange
  smu.measure.nplc = nplc
  smu.measure.sense=smu.SENSE_4WIRE
- smu.measure.autozero.enable = smu.OFF
  smu.measure.autozero.once()
+ 
+ --
+ -- source config list
+ --
+ smu.source.configlist.create("CurrentListSweep")
+ 
+ for index = 1, table.getn(currentLevels) do
+  smu.source.level = currentLevels[index]
+  smu.source.configlist.store("CurrentListSweep")
+ end
 
+--
+-- source sweep on configlist
+--
  print(string.format("configure sweeplist current Sweep delay: %g , repetition: %g",delay, repetition))
  smu.source.sweeplist("CurrentListSweep", 1,delay,repetition)
 
@@ -142,19 +146,19 @@ end
 
 -- experiment parameters
 local sourceDelay = 0 -- [s]
-local delay = 0.1 -- [s]
+local delay = 0.005 -- [s]
 local nplc = 0.01 -- range from 0.01 to 10 , default 1
-local resultFileNamePrefix = "test_battery_readback_100ms_1ma_autorangeOFF"
-local sourceFilenamePrefix = "generatedCurrent_100ms_1ma_autorangeOFF"
+local resultFileNamePrefix = "test_battery_readback_5ms_10ma_autoOFF"
+local sourceFilenamePrefix = "generatedCurrent_5ms_10ma_autoOFF"
 local sourceLabel = "Current"
 local readingLabel = "Voltage"
 local repetition = 1
 local measureRange = 5 --[V]  The fixed voltage source ranges are  20 mV, 200 mV, 2 V, 20 V, and 200 V.
-local sourceRange = 0.001 --[A] The fixed current source ranges are 10 nA, 100 nA, 1 microA, 10 microA, 100 microA, 1 mA, 10 mA, 100 mA, and 1 A
+local sourceRange = 0.01 --[A] The fixed current source ranges are 10 nA, 100 nA, 1 microA, 10 microA, 100 microA, 1 mA, 10 mA, 100 mA, and 1 A
 
 --  sinusoidal waveform parameters
 local sampleTime = delay -- output signal sampling period [s]
-local A = 0.010 -- current signal amplitude [A]
+local A = 0.01 -- current signal amplitude [A]
 local po=0.01 -- phase offset
 local b = 0 -- DC bias
 local signalDuration = 100 -- seconds 100
