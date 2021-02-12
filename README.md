@@ -6,11 +6,16 @@ Commercial instruments are available that can measure impedances from mΩ to TΩ
 
 The measurement of battery impedance is crucial for online monitoring of State of Charge and State of Health [1]
 
+
+[Getting started](docs/getting_started.md)
+
 [Electrochemical Impedance Spectroscopy (EIS)](docs/electrochemical-Impedance-spectroscopy.md)
 
 [current sweep speed test](docs/current-sweep-speed-test.md)
 
 Limitation of Keithley 2450 for EIS - TBD 
+
+EIS with Impedency.py
 
 [sinusoidal signal generator](docs/sinusoidal-signal-generator.md)
 
@@ -25,7 +30,6 @@ Data from Resistive load
 Data from RC load
 
 Data from Li-On Battery
-
 
 ## Todo
 

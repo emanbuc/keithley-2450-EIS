@@ -79,7 +79,7 @@ end
 Source current and measure voltage.
 Current source signal generated from list of values using sweeplist
 -- ]]
-function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition)
+function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition,measureRange)
  reset()
  defbuffer1.clear()
 
@@ -106,7 +106,7 @@ function doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay
 --Measure Settings
 --
  smu.measure.func = smu.FUNC_DC_VOLTAGE
- smu.measure.range = 21
+ smu.measure.range = measureRange
  smu.measure.nplc = nplc
  smu.measure.sense=smu.SENSE_4WIRE
  smu.measure.autozero.enable = smu.OFF
@@ -141,11 +141,12 @@ end
 local sourceDelay = 0 -- [s]
 local delay = 0.01 -- [s]
 local nplc = 0.01 -- range from 0.01 to 10 , default 1
-local resultFileNamePrefix = "test_battery_readback_10ms"
-local sourceFilenamePrefix = "generatedCurrent_10ms"
+local resultFileNamePrefix = "test_battery_readback_10ms_10ma"
+local sourceFilenamePrefix = "generatedCurrent_10ms_10ma"
 local sourceLabel = "Current"
 local readingLabel = "Voltage"
 local repetition = 1
+local measureRange = 5 --V
 
 --  sinusoidal waveform parameters
 local sampleTime = delay -- output signal sampling period [s]
@@ -183,7 +184,7 @@ while sweep[sweepIndex] do
 	saveToFile(sourceFilename,currentLevels)
 	
 	print("doSourceCurrentSweepMeasureVoltage ...")
-	doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition)
+	doSourceCurrentSweepMeasureVoltage(currentLevels,sourceDelay,nplc,delay,repetition,measureRange)
 	print(" doSourceCurrentSweepMeasureVoltage completed")
 	sweepIndex=sweepIndex+1	
 	
