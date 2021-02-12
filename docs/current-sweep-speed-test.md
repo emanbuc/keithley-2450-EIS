@@ -71,10 +71,38 @@ Per cercare indagare sulla possibilità di spingere al massimo le velocità a di
 Putroppo neppure impostando il valore minimo consentito `nplc=0.01` si riesce ad ottenre un intervallo campionamento costante di 1ms
 ![sweep test deplay 1ms NPLC](../media/currrent_sweep_test_1ms._npcl_RC_load.png)
 
+Il limite inferiore di circa 1mS per l'intervallo tra le diverse misurazioni eseguite nel soirce sweep è coerente con quanto riportato nel manuale di riverimento al paragrafo "source dealy" (pag. 4-46)
 
-
+![about source delay on reference manual](./media/../../media/manual4-46_source_delay.png)
 
 ### Conclusioni
 
+La massima velocità di esecuzione delle misure può essere ottentuta solo rinuncianto a parte della precisione.
+
+L'intervallo tra le misure eseguite determina la frequenza massima che è possibile analizzare per la EIS. Perp poter eseguire correttamente l'analisi spettrale devono essere soddisfatti due requisiti:
+
+- l'intervallo tra le diverse misure (intervallo di capionamenot) deve essere costante
+- il valore della corrente deve essere quello reale (misurato) e non quello teorico programmato sulla sorgente di corrente
+  
+Questi due requisiti determinano il limite inferiore per il parametro "source delay" che è possible ottimizzare.
+
+Un altro fattore da tenere in considerazione è la precisione numerica richiesta dalla misura. L'intervallo tra le misure è infatti inversamente proporzioanle al parametro  `NPLC`
+
+NPLC Set the amount of time that the input signal is measured. Lower NPLC settings result
+in faster reading rates, but increased noise. Higher NPLC settings result in lower
+reading noise, but slower reading rates.
+
+The amount of time is specified in parameters that are based on the number of power line cycles
+(NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
+The shortest amount of time results in the fastest reading rate, but increases the reading noise and
+decreases the number of usable digits.
+The longest amount of time provides the lowest reading noise and more usable digits, but has the
+slowest reading rate.
+Settings between the fastest and slowest number of power line cycles are a compromise between
+speed and noise.
+
+'analis spettrale è necessario che il tempo di 
+
+Per l'esecuzione di una EIS è necessario avere una misura relae della conrrente in ingresso e
 è stato possibile generare un segnale in corrente e misurare la tensione ai capi del DUT in maniiera accurata solo per intervalli di campionamento a partire 10ms.
 Lo strumento non riesce ad eseguire misure con intervallo inferiore a qualche ms.
