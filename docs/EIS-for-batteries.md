@@ -33,7 +33,7 @@ reading noise, but slower reading rates.
 The amount of time is specified in parameters that are based on the number of power line cycles
 (NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
 
-### Source Delay 
+### Source Delay e frequenza di campionamento per EIS
 
 Tra le diverse misurazioni è necessario introdurre un ritardo (`smu.sorce.delay`) per permettere alla sorgente di corrente raggiungere il livelo programmato e stabilizzarsi.
 
@@ -49,12 +49,15 @@ Non è stato possibile ridurre la variabilità dell'intervallo di campionamento 
 
 Impostando un `sorce delay=0.01` si ottiene un intervallo di campionamento pari a circa 10-12ms per  tutte le frequenza testate tra 0.05Hz e 40Hz
 
-Questa scelta consente inoltre di utilizzare un valore  di nplc più elevato (es. nplc=0.03) per aumentare ridurre la rumososità della misura senza limitare in maniera significativa l'analisi spettrale.
+Questa scelta consente inoltre di utilizzare un valore  di nplc più elevato per aumentare ridurre la rumososità della misura senza limitare in maniera significativa l'analisi spettrale.
 
-Altri compromessi tra banda passante e rumorosità sono possibili. Ad esempio negli esperimenti condotti con nplc=0,1 è stato possibile ottenere un intervallo di campionamento di 15ms con variabilità inferiore ad 1ms.
+I due valori permettono un trade-off tra frequenza di campionamento e rumorosità della misura. Negli esperimenti sono state provate ad esempio le combinaizoni:
 
+- `sorce delay=0.01 , nplc=0.1` permette di ottenere ottenere un intervallo di campionamento di 15ms con variabilità inferiore ad 1ms.
+- `sorce delay=0.005 , nplc=0.04` permette di ottenere ottenere un intervallo di campionamento di circa 7ms con variabilità inferiore ad 1ms
+- `sorce delay=0.005 , nplc=0.05` permette di ottenere ottenere un intervallo di campionamento di circa 7.5ms con variabilità inferiore ad 1ms
 
-
+Il valore esatto delle frequnaza di campionamento dipende dalla frequenza della tensione che alimenta lo strumento e non è quindi determinabile a priori con precisione. Approssimativamente 50Hz in Italia, ma localmente si possono verificare scostamenti significativi.
 
 ### Source Range
 
