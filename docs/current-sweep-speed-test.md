@@ -71,7 +71,7 @@ Per cercare indagare sulla possibilità di spingere al massimo le velocità a di
 Putroppo neppure impostando il valore minimo consentito `nplc=0.01` si riesce ad ottenre un intervallo campionamento costante di 1ms
 ![sweep test deplay 1ms NPLC](../media/currrent_sweep_test_1ms._npcl_RC_load.png)
 
-Il limite inferiore di circa 1mS per l'intervallo tra le diverse misurazioni eseguite nel soirce sweep è coerente con quanto riportato nel manuale di riverimento al paragrafo "source dealy" (pag. 4-46)
+Il limite inferiore di circa 1-2 mS per l'intervallo tra le diverse misurazioni eseguite nel source sweep è coerente con quanto riportato nel manuale di riverimento al paragrafo "source dealy" (pag. 4-46)
 
 ![about source delay on reference manual](./media/../../media/manual4-46_source_delay.png)
 

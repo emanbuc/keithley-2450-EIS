@@ -2,7 +2,9 @@
 
 The measurement of battery impedance is crucial for online monitoring of State of Charge (SoC) and State of Health (SoH) (1)
 
-## Configuration List
+## Soruce Settings
+
+### Configuration List
 
 A configuration list is a list of stored settings for the source or measure function. You can restore
 these settings to change the function and its settings that are used by the instrument.
@@ -18,14 +20,51 @@ Measure configuration lists contain the measure function
 setting and the settings for the measure function, such as the NPLC, display digits, and math settings.
 
 
-## Source Signal
+### Source Signal
 
 Le misure eseguite su batteria XXX con corrente di 1mA si sono rivelate molto rumorose. Migliori risultati sono stati ottentui con correnti di 10mA.
 
-## Soruce Delay
+### NPLC
+
+NPLC Set the amount of time that the input signal is measured. Lower NPLC settings result
+in faster reading rates, but increased noise. Higher NPLC settings result in lower
+reading noise, but slower reading rates.
+
+The amount of time is specified in parameters that are based on the number of power line cycles
+(NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
+
+### Source Delay 
 
 Tra le diverse misurazioni è necessario introdurre un ritardo (`smu.sorce.delay`) per permettere alla sorgente di corrente raggiungere il livelo programmato e stabilizzarsi.
 
+Lo strumento sarebbe in grado di eseguire le misure di tensione ai terminal del DUT con un intervallo di circa 1mS, ma l'intervallo di campionamento non è costante. 
+
+Sperimentalemte è stato determinato che l'intervallo minimo che è possibile ottenere con `smu.source.readback = smu.ON`, `nplc=0.01`  e le forme d'onda sinusoidali nel range di frequenze utilizzate per l'esperimento è variabile e compreso tra 1ms e 3ms
+
+Sembra non si apossibile ridurre l'incetezza sul timing dell'esecuzuioendella misura. 
+
+
+La variabilità assoluta dell'intervallo di campionamento sembra  essere indipendente dal valore del paramtro `smu.sorce.delay`: per valori comoresi tra 0 e 10
+Non è stato possibile ridurre la variabilità dell'intervallo di campionamento che rimane sempre di circa 
+
+Impostando un `sorce delay=0.01` si ottiene un intervallo di campionamento pari a circa 10-12ms per  tutte le frequenza testate tra 0.05Hz e 40Hz
+
+Questa scelta consente inoltre di utilizzare un valore  di nplc più elevato (es. nplc=0.03) per aumentare ridurre la rumososità della misura senza limitare in maniera significativa l'analisi spettrale.
+
+Altri compromessi tra banda passante e rumorosità sono possibili. Ad esempio negli esperimenti condotti con nplc=0,1 è stato possibile ottenere un intervallo di campionamento di 15ms con variabilità inferiore ad 1ms.
+
+
+
+
+### Source Range
+
+## Measure Settings
+
+xxx
+
+### Measure Range
+
+xx
 
 ## References
 
