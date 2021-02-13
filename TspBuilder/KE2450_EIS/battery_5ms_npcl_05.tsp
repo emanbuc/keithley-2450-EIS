@@ -148,8 +148,8 @@ end
 local sourceDelay = 0 -- [s]
 local delay = 0.005 -- [s]
 local nplc = 0.05 -- range from 0.01 to 10 , default 1
-local resultFileNamePrefix = "test_battery_readback_10ms_10ma_autoOFF_nplc_05"
-local sourceFilenamePrefix = "generatedCurrent_battery_10ms_10ma_autoOFF_nplc_05"
+local resultFileNamePrefix = "test_battery_readback_5ms_10ma_autoOFF_nplc_05"
+local sourceFilenamePrefix = "generatedCurrent_battery_5ms_10ma_autoOFF_nplc_05"
 local sourceLabel = "Current"
 local readingLabel = "Voltage"
 local repetition = 1
