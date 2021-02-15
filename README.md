@@ -1,10 +1,8 @@
 # keithley-2450-EIS
 
-Scopo del progetto è verificare sperimentalmente la possibilità di eseguire un EIS utilizzando lo strumento smu Keithley 2450. Questo tipo di esame non è tra le applicazioni riportate nelle documentazione, ma almeno in teoria i dati di targa dovrebbero permettere la misura, almeno per basse frequenze.
+This project aims to perform a Electrochemical impedance spectroscopy (EIS) on a Li-Ion rechargeable battery using the Keithley 2450 Source Measure Unit (SMU) Instrument. Even the EIS is not among the applications listed in the official documentation,  the features of the instrument allow to perform the impedance measurement up to 100Hz.
 
-Commercial instruments are available that can measure impedances from mΩ to TΩ and over frequencies from μHz to MHz.
-
-The measurement of battery impedance is crucial for online monitoring of State of Charge and State of Health [1]
+The measurement of battery impedance is crucial for online monitoring of State of Charge and State of Health [1](docs/references.md#1). Lab measurements with Keithley 2450 can be used as bechmark to validate data from custom build impedence monitoring system such as [2](docs/references.md#2)
 
 
 [Getting started](docs/getting_started.md)
@@ -30,11 +28,3 @@ Data from Resistive load
 Data from RC load
 
 Data from Li-On Battery
-
-## Todo
-
-- stepped sine frequency sweep  con frequenze dell'articolo: 0.05, 0.1, 0.2, 0.4, 1, 2,4,10,20,40 con - 10mA  prendere almeno un perido per ogni segnale. Provare 100sec per ogni step
-  - RC
-  - Batteria
-
-- Usage of Multi-Sine Signals for Electrochemical Impedance Spectroscopy

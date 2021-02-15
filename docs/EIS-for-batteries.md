@@ -1,24 +1,33 @@
-# EIS for batteries
+# Electrochemical impedance spectroscopy (EIS) on batteries with Keintly 2450
 
-The measurement of battery impedance is crucial for online monitoring of State of Charge (SoC) and State of Health (SoH) (1)
+This project aims to perform a Electrochemical impedance spectroscopy (EIS) on a Li-Ion rechargeable battery using the Keithley 2450 Source Measure Unit (SMU) Instrument. Even the EIS is not among the applications listed in the official documentation,  the features of the instrument allow to perform the impedance measurement up to 100Hz.
 
-## Soruce Settings
+The measurement of battery impedance is crucial for online monitoring of State of Charge and State of Health [1](docs/references.md#1). Lab measurements with Keithley 2450 can be used as bechmark to validate data from custom build impedence monitoring system such as [2](docs/references.md#2)
 
-### Configuration List
+## How To Prerform an EIS
 
-A configuration list is a list of stored settings for the source or measure function. You can restore
-these settings to change the function and its settings that are used by the instrument.
-Configuration lists allow you to store the function settings of the instrument and then return the
-instrument to those settings as needed.
+[EIS](/docs/electrochemical-Impedance-spectroscopy.md)
+
+TBC
+
+## Configuration List on Keintly 2450
+
+A configuration list is a list of stored settings for the source or measure function. Configuration lists allow you to store the function settings of the instrument and then return the instrument to those settings as needed.
 The instrument also uses configuration lists to manage the settings for sweeps.
 
-A configuration index contains a copy of all instrument source or measure settings at a specific point.
+A configuration index contains **a copy of all instrument source or measure settings at a specific point**.
 Configuration lists are typically made up of multiple indexes.
-You can store a maximum of 300,000 indexes
+You can store a **maximum of 300,000 indexes**.
 
-Measure configuration lists contain the measure function
-setting and the settings for the measure function, such as the NPLC, display digits, and math settings.
+Measure configuration lists contain the source/measure function setting and the settings for the source/measure function, such as the NPLC, display digits, and math settings.
 
+In this project a source and measure configuration list is created with source value from [sinusoidal signal generation](sinusoidal-signal-generator.md) included in the tSP script.
+
+
+
+## Source Settings
+
+TBC
 
 ### Source Signal
 
@@ -68,11 +77,3 @@ xxx
 ### Measure Range
 
 xx
-
-## References
-
-[1] A. Guha and A. Patra, "Online Estimation of the
-Electrochemical Impedance Spectrum and
-Remaining Useful Life of Lithium-Ion Batteries," in
-IEEE Transactions on Instrumentation and
-Measurement, vol. 67, no. 8, pp. 1836-1849, 2018.
