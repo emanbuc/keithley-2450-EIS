@@ -27,34 +27,49 @@ In this project a source and measure configuration list is created with source v
 
 ## Source Settings
 
-TBC
+Source parameters must be set before the creation of the source configuration list.
 
-### Source Signal
+For impedence estimation a current imput signal is sourced and a voltage on DUT terminals is measured.
 
-Le misure eseguite su batteria XXX con corrente di 1mA si sono rivelate molto rumorose. Migliori risultati sono stati ottentui con correnti di 10mA.
+```lua
+ smu.source.func = smu.FUNC_DC_CURRENT
+ smu.source.readback = smu.ON
+ smu.source.vlimit.level = 21 -- [V]
+ smu.source.autorange = smu.OFF
+ smu.source.range = 0.010 --[A]
+ smu.source.delay = 0 -- [s]
+```
+
+`smu.source.readback = smu.ON` mean that the output of the measure will include the measured source singal levels while with `smu.source.readback = smu.OFF` the programmed value is used. The source signal measure is executed immidiatly before the measure signal measuremnt. This additional measure require some time and increase the overall time required for each messuremt.
+
+`smu.source.autorange = smu.OFF` disables the autorange function to avoid delay during range changes. A fixed `smu.source.range = 0.010` is therfore used.
+
+`smu.source.delay=0` allow to control the delay between two measures only with `delay` paramer `function`.
 
 ### NPLC
 
-NPLC Set the amount of time that the input signal is measured. Lower NPLC settings result
-in faster reading rates, but increased noise. Higher NPLC settings result in lower
-reading noise, but slower reading rates.
+NPLC Set the amount of time that the input signal is measured. Lower NPLC settings result in faster reading rates, but increased noise. Higher NPLC settings result in lower reading noise, but slower reading rates.
 
-The amount of time is specified in parameters that are based on the number of power line cycles
-(NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
+The amount of time is specified in parameters that are based on the number of power line cycles (NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
 
 ### Source Delay e frequenza di campionamento per EIS
 
 Tra le diverse misurazioni è necessario introdurre un ritardo (`smu.sorce.delay`) per permettere alla sorgente di corrente raggiungere il livelo programmato e stabilizzarsi.
 
-Lo strumento sarebbe in grado di eseguire le misure di tensione ai terminal del DUT con un intervallo di circa 1mS, ma l'intervallo di campionamento non è costante. 
+Lo strumento sarebbe in grado di eseguire le misure di tensione ai terminal del DUT con un intervallo di circa 1mS, ma l'intervallo di campionamento non è costante.
 
-Sperimentalemte è stato determinato che l'intervallo minimo che è possibile ottenere con `smu.source.readback = smu.ON`, `nplc=0.01`  e le forme d'onda sinusoidali nel range di frequenze utilizzate per l'esperimento è variabile e compreso tra 1ms e 3ms
+I dati raccolti mostrano che l'intervallo minimo che è possibile ottenere con `smu.source.readback = smu.ON`, `nplc=0.01`  e le forme d'onda sinusoidali nel range di frequenze utilizzate per l'esperimento è variabile e compreso tra 1ms e 3ms
 
-Sembra non si apossibile ridurre l'incetezza sul timing dell'esecuzuioendella misura. 
+ La variabilità assoluta dell'intervallo di campionamento sembra  essere indipendente dal valore del paramtro `smu.sorce.delay` almeno per valori comoresi tra 0 e 10.
 
+  ![Source delay - from Reference Manual](../media/manual_source_delay.png)
 
-La variabilità assoluta dell'intervallo di campionamento sembra  essere indipendente dal valore del paramtro `smu.sorce.delay`: per valori comoresi tra 0 e 10
-Non è stato possibile ridurre la variabilità dell'intervallo di campionamento che rimane sempre di circa 
+ L'intervallo tra due misure consecutive è la somma di almeno tre compoenti:
+
+- trigger Latency
+- source delay (or autodelay)
+- measuremnt time (controlled by nplc parameter)
+
 
 Impostando un `sorce delay=0.01` si ottiene un intervallo di campionamento pari a circa 10-12ms per  tutte le frequenza testate tra 0.05Hz e 40Hz
 
@@ -68,12 +83,18 @@ I due valori permettono un trade-off tra frequenza di campionamento e rumorosit�
 
 Il valore esatto delle frequnaza di campionamento dipende dalla frequenza della tensione che alimenta lo strumento e non è quindi determinabile a priori con precisione. Approssimativamente 50Hz in Italia, ma localmente si possono verificare scostamenti significativi.
 
-### Source Range
 
 ## Measure Settings
 
-xxx
+```lua
+ smu.measure.func = smu.FUNC_DC_VOLTAGE
+ smu.measure.autorange = smu.OFF
+ smu.measure.range = 5 [V]
+ smu.measure.nplc = 0.01
+ smu.measure.sense=smu.SENSE_4WIRE
+ smu.measure.autozero.once()
+```
 
 ### Measure Range
 
-xx
+Measurement range should match the output signal range to obtain the best SNC. The fixed current source ranges are 10 nA, 100 nA, 1 microA, 10 microA, 100 microA, 1 mA, 10 mA, 100 mA, and 1 A
