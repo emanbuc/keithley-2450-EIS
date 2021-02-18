@@ -62,24 +62,48 @@ I dati raccolti mostrano che l'intervallo minimo che è possibile ottenere con `
 
  La variabilità assoluta dell'intervallo di campionamento sembra  essere indipendente dal valore del paramtro `smu.sorce.delay` almeno per valori comoresi tra 0 e 10.
 
+L'intervallo tra due misure consecutive in un list sweep è la somma di due distinti delay: sweep delay (parametro sDelay dello sweep) e source delay .
+
+#### Sweep Delay
+
+Il parametro sDelay può essere impostato a 0 oppure ad un valore tra 50microS e 10Ks.  (pag. 14-196 del manuale di riferimento)
+
+Lo sweep delay si va sempre a sommare al source delay.
+
+#### Source delay
+
+Il source delay è la somma di tre componenti (vedi "source delay" a  pag 4-46 del manuale di riferimento):
+
   ![Source delay - from Reference Manual](../media/manual_source_delay.png)
 
- L'intervallo tra due misure consecutive è la somma di almeno tre compoenti:
+1. trigger Latency (100 micro secondi non modificabile)
+2. source delay / autodelay
+3. measure time
 
-- trigger Latency
-- source delay (or autodelay)
-- measuremnt time (controlled by nplc parameter)
+#### Autodelay
 
+Anche se il _source delay_ è configurato a zero (`smu.source.delay=0`) viene inserito automaticamente un delay (autodelay) che dipende dal valore della corrente.
+**Attenzione che i valori riportati nella tabella a pag. 4-46 sono validi per reaback = false.**
+Con readback=true non è chiaro qualse sia il valore dell'autodelay. La mia ipotesi che il _measure time_ debba essere contato due volte (una per la tensione e una per la corrente).
 
-Impostando un `sorce delay=0.01` si ottiene un intervallo di campionamento pari a circa 10-12ms per  tutte le frequenza testate tra 0.05Hz e 40Hz
+#### Measure Time
+
+Il measure time dipende dal parametro nplc.  NPLC =0.01 => 167microSecondi Con alimentazione 60Hz , e 200 microSecondi con al nostra 50Hz (ammesso che sia veramente 50Hz .... sarebbe da misurare questo parametro visto che localmente ci possono essere scostamenti notevoli) . 
+Prendendo per buoni i 50Hz con il readback attivo dovrebbero venire fuori 400microSecondi per la componente "measure time".
+
+Il valore sale a 2ms per nplc=0.05  (0.05/50)*2 =0.002 s
+
+#### SweepDealy and NPLC parameters
+
+Impostando un `sweep delay=0.01` si ottiene un intervallo di campionamento pari a circa 10-12ms per  tutte le frequenza testate tra 0.05Hz e 40Hz
 
 Questa scelta consente inoltre di utilizzare un valore  di nplc più elevato per aumentare ridurre la rumososità della misura senza limitare in maniera significativa l'analisi spettrale.
 
 I due valori permettono un trade-off tra frequenza di campionamento e rumorosità della misura. Negli esperimenti sono state provate ad esempio le combinaizoni:
 
-- `sorce delay=0.01 , nplc=0.1` permette di ottenere ottenere un intervallo di campionamento di 15ms con variabilità inferiore ad 1ms.
-- `sorce delay=0.005 , nplc=0.04` permette di ottenere ottenere un intervallo di campionamento di circa 7ms con variabilità inferiore ad 1ms
-- `sorce delay=0.005 , nplc=0.05` permette di ottenere ottenere un intervallo di campionamento di circa 7.5ms con variabilità inferiore ad 1ms
+- `sweep delay=0.01 , nplc=0.1` permette di ottenere ottenere un intervallo di campionamento di 15ms con variabilità inferiore ad 1ms.
+- `sweep delay=0.005 , nplc=0.04` permette di ottenere ottenere un intervallo di campionamento di circa 7ms con variabilità inferiore ad 1ms
+- `sweep delay=0.005 , nplc=0.05` permette di ottenere ottenere un intervallo di campionamento di circa 7.5ms con variabilità inferiore ad 1ms
 
 Il valore esatto delle frequnaza di campionamento dipende dalla frequenza della tensione che alimenta lo strumento e non è quindi determinabile a priori con precisione. Approssimativamente 50Hz in Italia, ma localmente si possono verificare scostamenti significativi.
 
