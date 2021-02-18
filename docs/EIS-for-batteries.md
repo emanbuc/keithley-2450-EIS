@@ -68,6 +68,8 @@ L'intervallo tra due misure consecutive in un list sweep è la somma di due dist
 
 Il parametro sDelay può essere impostato a 0 oppure ad un valore tra 50microS e 10Ks.  (pag. 14-196 del manuale di riferimento)
 
+![sweeplist function parameters from reference manual](../media/manual_sweeplist.png)
+
 Lo sweep delay si va sempre a sommare al source delay.
 
 #### Source delay
