@@ -2,15 +2,34 @@
 
 This project aims to perform a Electrochemical impedance spectroscopy (EIS) on a Li-Ion rechargeable battery using the Keithley 2450 Source Measure Unit (SMU) Instrument. Even the EIS is not among the applications listed in the official documentation,  the features of the instrument allow to perform the impedance measurement up to 100Hz.
 
-The measurement of battery impedance is crucial for online monitoring of State of Charge and State of Health [1](docs/references.md#1). Lab measurements with Keithley 2450 can be used as bechmark to validate data from custom build impedence monitoring system such as [2](docs/references.md#2)
+The measurement of battery impedance is crucial for online monitoring of State of Charge and State of Health [(1)](docs/references.md#1). Lab measurements with Keithley 2450 can be used as bechmark to validate data from custom build impedence monitoring system such as [(2)](docs/references.md#2)
+
+## Programming Keintly 2450 smu
+
+Keintly 2450 can be operated using a remote command inteface, a local script or front panel. The Script Manager application can load and execute locally TSP scripts from USB storage device or from internal storage.
+
+### Remote Operation
+
+In remote operation mode a computer (controller) is programmed to send sequences of commands to an instrument.  The controller orchestrates the actions of the instrumentation. The controller is typically programmed to request measurement results from the instrumentation and make test sequence decisions based on those measurements.
+Keintly 2450 support GPIB, SCPI, and TSP remote command set.
+
+## The Test Script Processor (TSP®)
+
+To take advantage of the advanced features of the instrument, you can add programming commands to your scripts. Programming commands control script execution and provide tools such as variables, functions, branching, and loop control.
+The Test Script Processor (TSP®) scripting engine is a Lua interpreter. In TSP-enabled instruments, the Lua programming language has been extended with Keithley-specific instrument control commands.
+
+### What is Lua?
+
+Lua is a programming language that can be used with TSP-enabled instruments. Lua is an efficient scripting language with simple syntax and a complete functionality set.
 
 ## How To Prerform an EIS
 
-[EIS](/docs/electrochemical-Impedance-spectroscopy.md)
+Single-Sine EIS measurements involve applying a sinusoidal perturbation (voltage or current) and measuring the response (current or voltage respectively). See [EIS section](/docs/electrochemical-Impedance-spectroscopy.md) for more details.
+There is no built in sinusoidal signale generation, so 50mA sinusoidal current signal has been generated using the source sweeplist function
 
-TBC
+The sweeplist function allow to go trough a list of source configuration and perfome a measure for each item of the list. Refere to the [getting started](docs/../getting_started.md) section for step-by-step guidance.
 
-## Configuration List on Keintly 2450
+### Configuration List on Keintly 2450
 
 A configuration list is a list of stored settings for the source or measure function. Configuration lists allow you to store the function settings of the instrument and then return the instrument to those settings as needed.
 The instrument also uses configuration lists to manage the settings for sweeps.
@@ -22,7 +41,6 @@ You can store a **maximum of 300,000 indexes**.
 Measure configuration lists contain the source/measure function setting and the settings for the source/measure function, such as the NPLC, display digits, and math settings.
 
 In this project a source and measure configuration list is created with source value from [sinusoidal signal generation](sinusoidal-signal-generator.md) included in the tSP script.
-
 
 
 ## Source Settings

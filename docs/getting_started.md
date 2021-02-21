@@ -1,6 +1,7 @@
 # Getting Started
 
-Edit experiment parameters in `main.tsp` file
+Edit experiment parameters in a computer  `main.tsp` file and save a copy to the USB drive with s unique name.
+
 
 ```lua
 -- experiment parameters
