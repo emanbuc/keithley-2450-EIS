@@ -4,44 +4,49 @@ This project aims to perform a Electrochemical impedance spectroscopy (EIS) on a
 
 The measurement of battery impedance is crucial for online monitoring of State of Charge and State of Health [(1)](docs/references.md#1). Lab measurements with Keithley 2450 can be used as bechmark to validate data from custom build impedence monitoring system such as [(2)](docs/references.md#2)
 
-## Programming Keintly 2450 smu
+## Programming Keintly 2450
 
 Keintly 2450 can be operated using a remote command inteface, a local script or front panel. The Script Manager application can load and execute locally TSP scripts from USB storage device or from internal storage.
 
-### Remote Operation
+### Remote Controlled Operations
 
 In remote operation mode a computer (controller) is programmed to send sequences of commands to an instrument.  The controller orchestrates the actions of the instrumentation. The controller is typically programmed to request measurement results from the instrumentation and make test sequence decisions based on those measurements.
 Keintly 2450 support GPIB, SCPI, and TSP remote command set.
+
+### Local Stand-Alone Operations
+
+TO BE COMPLETED
 
 ## The Test Script Processor (TSP®)
 
 To take advantage of the advanced features of the instrument, you can add programming commands to your scripts. Programming commands control script execution and provide tools such as variables, functions, branching, and loop control.
 The Test Script Processor (TSP®) scripting engine is a Lua interpreter. In TSP-enabled instruments, the Lua programming language has been extended with Keithley-specific instrument control commands.
 
-### What is Lua?
+Lua is a programming language that can be used with TSP-enabled instruments. Lua is an efficient scripting language with simple syntax and a complete functionality set, but the buil-in Keintly implmentation has some limitations. TSP script do not support multi module programs: all code shoud reside in a single file with `.tsp` extention. `.lua` are not supported form _Script Manager_ and can not be seen from module loader at runtime.
 
-Lua is a programming language that can be used with TSP-enabled instruments. Lua is an efficient scripting language with simple syntax and a complete functionality set.
+## How To Prerform an EIS on Keintly 2450
 
-## How To Prerform an EIS
+Single-Sine [EIS measurements](docs/electrochemical-Impedance-spectroscopy.md) involve applying a sinusoidal perturbation (voltage or current) at different frequencies and measuring the response (current or voltage respectively). A 50mA sinusoidal current signal has been used for this experiment.
 
-Single-Sine EIS measurements involve applying a sinusoidal perturbation (voltage or current) and measuring the response (current or voltage respectively). See [EIS section](/docs/electrochemical-Impedance-spectroscopy.md) for more details.
-There is no built in sinusoidal signale generation, so 50mA sinusoidal current signal has been generated using the source sweeplist function
+The programmable current source lack a native functionality for sinusoidla signal generation so we had approximate the waveform defining configuration list with current values from a sampled sinusoidal singnal. Due to _single sorce module_ limitation of TSP programming, che code for [signal generation](sinusoidal-signal-generator.md) is included in the main `*.tsp` file.
 
-The sweeplist function allow to go trough a list of source configuration and perfome a measure for each item of the list. Refere to the [getting started](docs/../getting_started.md) section for step-by-step guidance.
+The _sweeplist_ function allow to iterate over a list of source configuration and performe a measure for each item of the list.
 
-### Configuration List on Keintly 2450
+### Configuration List
 
 A configuration list is a list of stored settings for the source or measure function. Configuration lists allow you to store the function settings of the instrument and then return the instrument to those settings as needed.
-The instrument also uses configuration lists to manage the settings for sweeps.
 
-A configuration index contains **a copy of all instrument source or measure settings at a specific point**.
-Configuration lists are typically made up of multiple indexes.
-You can store a **maximum of 300,000 indexes**.
+_Configuration lists_ are typically made up of multiple _configuration indexes_. You can store a **maximum of 300,000 indexes** on Keintly 2450. A _configuration index_ contains **a copy of all instrument source or measure settings at a specific point** such as:
 
-Measure configuration lists contain the source/measure function setting and the settings for the source/measure function, such as the NPLC, display digits, and math settings.
+- source/measure function setting
+- NPLC
+- source range
+- measure range
+- autorange
+- autozero
+- display digit
 
-In this project a source and measure configuration list is created with source value from [sinusoidal signal generation](sinusoidal-signal-generator.md) included in the tSP script.
-
+Measure configuration lists contain the  and the settings for the source/measure function, such as the NPLC, display digits, and math settings.
 
 ## Source Settings
 
@@ -54,7 +59,7 @@ For impedence estimation a current imput signal is sourced and a voltage on DUT 
  smu.source.readback = smu.ON
  smu.source.vlimit.level = 21 -- [V]
  smu.source.autorange = smu.OFF
- smu.source.range = 0.010 --[A]
+ smu.source.range = 0.050 --[A]
  smu.source.delay = 0 -- [s]
 ```
 
