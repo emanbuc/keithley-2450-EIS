@@ -22,7 +22,7 @@ TO BE COMPLETED
 To take advantage of the advanced features of the instrument, you can add programming commands to your scripts. Programming commands control script execution and provide tools such as variables, functions, branching, and loop control.
 The Test Script Processor (TSP®) scripting engine is a Lua interpreter. In TSP-enabled instruments, the Lua programming language has been extended with Keithley-specific instrument control commands.
 
-Lua is a programming language that can be used with TSP-enabled instruments. Lua is an efficient scripting language with simple syntax and a complete functionality set, but the buil-in Keintly implmentation has some limitations. TSP script do not support multi module programs: all code shoud reside in a single file with `.tsp` extention. `.lua` are not supported form _Script Manager_ and can not be seen from module loader at runtime.
+Lua is a programming language that can be used with TSP-enabled instruments. Lua is an efficient scripting language with simple syntax and a complete functionality set, but the buil-in Keintly implmentation has some limitations. TSP script do not support multi module programs: all code shoud reside in a single file with `.tsp` extention. `.lua` are not supported form _Script Manager_ and can not be seen from module loader at runtime. External modules form Lua ecosistem can not be imported in the TSP script. Only the libreries builtin into the firmaware can be imported.
 
 ## How To Prerform an EIS on Keintly 2450
 
@@ -31,6 +31,13 @@ Single-Sine [EIS measurements](docs/electrochemical-Impedance-spectroscopy.md) i
 The programmable current source lack a native functionality for sinusoidla signal generation so we had approximate the waveform defining configuration list with current values from a sampled sinusoidal singnal. Due to _single sorce module_ limitation of TSP programming, che code for [signal generation](sinusoidal-signal-generator.md) is included in the main `*.tsp` file.
 
 The _sweeplist_ function allow to iterate over a list of source configuration and performe a measure for each item of the list.
+
+The TSP script that get the data for EIS computation is made by four steps:
+
+1. generate discrete signal sample
+2. define configuration list and define experiments settings
+3. perform measure
+4. export data to file
 
 ### Configuration List
 
@@ -131,7 +138,6 @@ I due valori permettono un trade-off tra frequenza di campionamento e rumorosit�
 - `sweep delay=0.005 , nplc=0.05` permette di ottenere ottenere un intervallo di campionamento di circa 7.5ms con variabilità inferiore ad 1ms
 
 Il valore esatto delle frequnaza di campionamento dipende dalla frequenza della tensione che alimenta lo strumento e non è quindi determinabile a priori con precisione. Approssimativamente 50Hz in Italia, ma localmente si possono verificare scostamenti significativi.
-
 
 ## Measure Settings
 
