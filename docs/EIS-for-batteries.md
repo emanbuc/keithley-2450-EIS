@@ -55,34 +55,29 @@ _Configuration lists_ are typically made up of multiple _configuration indexes_.
 
 Measure configuration lists contain the  and the settings for the source/measure function, such as the NPLC, display digits, and math settings.
 
-## Source Settings
+## Data acquisition sampling frequency
 
-Source parameters must be set before the creation of the source configuration list.
+The time interval between two consecutive measure is the sum of four element:
 
-For impedence estimation a current imput signal is sourced and a voltage on DUT terminals is measured.
+ 1. Trigger Latency
+ 2. Explict source delay or implicit source autodelay
+ 3. Measure time
+ 4. sweep delay
 
-```lua
- smu.source.func = smu.FUNC_DC_CURRENT
- smu.source.readback = smu.ON
- smu.source.vlimit.level = 21 -- [V]
- smu.source.autorange = smu.OFF
- smu.source.range = 0.050 --[A]
- smu.source.delay = 0 -- [s]
-```
+All but trigger latency can be influenced by user configurable parameters.
 
-`smu.source.readback = smu.ON` mean that the output of the measure will include the measured source singal levels while with `smu.source.readback = smu.OFF` the programmed value is used. The source signal measure is executed immidiatly before the measure signal measuremnt. This additional measure require some time and increase the overall time required for each messuremt.
+![Source delay - time diagram from Reference Manual p.4-46](../media/manual_source_delay.png)
 
-`smu.source.autorange = smu.OFF` disables the autorange function to avoid delay during range changes. A fixed `smu.source.range = 0.010` is therfore used.
+### Source Delay
 
-`smu.source.delay=0` allow to control the delay between two measures only with `delay` paramer `function`.
+The programmable current source will tak some time to reach next set point. The ammount of delay is controllerd by `smu.source.delay` parameter.
 
-### NPLC
+#### Autodelay
 
-NPLC Set the amount of time that the input signal is measured. Lower NPLC settings result in faster reading rates, but increased noise. Higher NPLC settings result in lower reading noise, but slower reading rates.
-
-The amount of time is specified in parameters that are based on the number of power line cycles (NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
-
-### Source Delay e frequenza di campionamento per EIS
+If no explict source delay is set (`smu.source.delay=0`) an autodelay will be inserted by the firmware. 
+ valore della corrente.
+**Attenzione che i valori riportati nella tabella a pag. 4-46 sono validi per reaback = false.**
+Con readback=true non è chiaro qualse sia il valore dell'autodelay. La mia ipotesi che il _measure time_ debba essere contato due volte (una per la tensione e una per la corrente).
 
 Tra le diverse misurazioni è necessario introdurre un ritardo (`smu.sorce.delay`) per permettere alla sorgente di corrente raggiungere il livelo programmato e stabilizzarsi.
 
@@ -101,22 +96,6 @@ Il parametro sDelay può essere impostato a 0 oppure ad un valore tra 50microS e
 ![sweeplist function parameters from reference manual](../media/manual_sweeplist.png)
 
 Lo sweep delay si va sempre a sommare al source delay.
-
-#### Source delay
-
-Il source delay è la somma di tre componenti (vedi "source delay" a  pag 4-46 del manuale di riferimento):
-
-  ![Source delay - from Reference Manual](../media/manual_source_delay.png)
-
-1. trigger Latency (100 micro secondi non modificabile)
-2. source delay / autodelay
-3. measure time
-
-#### Autodelay
-
-Anche se il _source delay_ è configurato a zero (`smu.source.delay=0`) viene inserito automaticamente un delay (autodelay) che dipende dal valore della corrente.
-**Attenzione che i valori riportati nella tabella a pag. 4-46 sono validi per reaback = false.**
-Con readback=true non è chiaro qualse sia il valore dell'autodelay. La mia ipotesi che il _measure time_ debba essere contato due volte (una per la tensione e una per la corrente).
 
 #### Measure Time
 
@@ -139,17 +118,47 @@ I due valori permettono un trade-off tra frequenza di campionamento e rumorosit�
 
 Il valore esatto delle frequnaza di campionamento dipende dalla frequenza della tensione che alimenta lo strumento e non è quindi determinabile a priori con precisione. Approssimativamente 50Hz in Italia, ma localmente si possono verificare scostamenti significativi.
 
+## Source Settings
+
+Source parameters must be set before the creation of the source configuration list.
+
+For impedence estimation a current imput signal is sourced and a voltage on DUT terminals is measured.
+
+```lua
+ smu.source.func = smu.FUNC_DC_CURRENT
+ smu.source.readback = smu.ON
+ smu.source.vlimit.level = 21 -- [V]
+ smu.source.autorange = smu.OFF
+ smu.source.range = 0.050 --[A]
+ smu.source.delay = 0 -- [s]
+```
+
+`smu.source.readback = smu.ON` mean that the output of the measure will include the measured source singal levels while with `smu.source.readback = smu.OFF` the programmed value is used. The source signal measure is executed immidiatly before the measure signal measuremnt. This additional measure require some time and increase the overall time required for each messuremt.
+
+`smu.source.autorange = smu.OFF` disables the autorange function to avoid delay during range changes. A fixed `smu.source.range = 0.010` is therfore used.
+
+`smu.source.delay=0` allow to control the delay between two measures only with `delay` paramer `function`.
+
 ## Measure Settings
+
+In order to achive the maximum speed the minimul nplc value is chosen anche atutoero functionality is turned off. 
 
 ```lua
  smu.measure.func = smu.FUNC_DC_VOLTAGE
  smu.measure.autorange = smu.OFF
- smu.measure.range = 5 [V]
- smu.measure.nplc = 0.01
+ smu.measure.range = 5 -- [V]
+ smu.measure.nplc = 0.01 -- from 0.01 to 10
  smu.measure.sense=smu.SENSE_4WIRE
  smu.measure.autozero.once()
 ```
 
 ### Measure Range
 
+Seletting the most appropriate measure range it's important to get a good SNC figure.
 Measurement range should match the output signal range to obtain the best SNC. The fixed current source ranges are 10 nA, 100 nA, 1 microA, 10 microA, 100 microA, 1 mA, 10 mA, 100 mA, and 1 A
+
+### NPLC
+
+NPLC Set the amount of time that the input signal is measured. Lower NPLC settings result in faster reading rates, but increased noise. Higher NPLC settings result in lower reading noise, but slower reading rates.
+
+The amount of time is specified in parameters that are based on the number of power line cycles (NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
