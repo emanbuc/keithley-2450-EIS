@@ -6,7 +6,7 @@ The measurement of battery impedance is crucial for online monitoring of State o
 
 ## Programming Keithley 2450
 
-Keithley  2450 can be operated using one the supported remote command interface, running  a script from onboard Script Manager application or from interactive front panel interface. The Script Manager application can load and execute TSP scripts from external storage unit connected on USB port or from internal memory.
+Keithley  2450 can be operated using one the supported remote command interface, running  a script from onboard Script Manager application or from interactive front panel interface. The Script Manager application can load and execute TSP script files from external storage unit connected to the USB port or from the internal memory.
 
 ### Remote Controlled Operations
 
@@ -21,25 +21,31 @@ TO BE COMPLETED
 
 ## The Test Script Processor (TSP®)
 
-To take advantage of the advanced features of the instrument, you can add programming commands to your scripts. Programming commands control script execution and provide tools such as variables, functions, branching, and loop control.
 The Test Script Processor (TSP®) scripting engine is a Lua interpreter. In TSP-enabled instruments, the Lua programming language has been extended with Keithley-specific instrument control commands.
 
-Lua is a programming language that can be used with TSP-enabled instruments. Lua is an efficient scripting language with simple syntax and a complete functionality set, but the built-in Keithley implementation has some limitations. TSP script do not support multi module programs: all code should reside in a single file with `.tsp` extension. `.lua` are not supported form _Script Manager_ and can not be seen from module loader at runtime. External modules form Lua ecosystem can not be imported in the TSP script. Only the libraries builtin into the firmware can be imported.
+Lua is an efficient general purpose scripting language with simple syntax and a complete functionality set supported by an active community of developer and with a rich ecosystem of open source libraries.
 
-## How To Perform an EIS on Keithley 2450
+TSP allows to control every features of the instrument while using standard while using standard programming commands to control script execution such as variables, functions, conditional branching, and loop control.
 
-Single-Sine [EIS measurements](docs/electrochemical-Impedance-spectroscopy.md) involve applying a sinusoidal perturbation (voltage or current) at different frequencies and measuring the response (current or voltage respectively). A 50mA sinusoidal current signal has been used for this experiment.
+The main limit of TSP is that all code should reside in a single file named `*.tsp`. File with extension. `.lua` can not be executed form _Script Manager_ and external file can not be loaded at runtime using the `import <module name>` syntax. There is no easy way to add functionality loading external module from one of the many Lua open source repositories.
 
-The programmable current source API lack a native function for sinusoidal signal generation so we had to approximate the waveform defining configuration list with current values from a sampled sinusoidal signal. Due to _single source module_ limitation of TSP programming, che code for [signal generation](sinusoidal-signal-generator.md) is included in the main `*.tsp` file.
+## How To Perform an EIS on Keithley 2450 with TSP
+
+Single-Sine [EIS measurements](docs/electrochemical-Impedance-spectroscopy.md) involve applying a sinusoidal perturbation (voltage or current) at different frequencies and measuring the response (current or voltage respectively). A 50mA sinusoidal source current signal has been used for this experiment and voltage across DUT has been meaured with a four wire measurement configuration.
+
+### Generate Sinusoidal current source signal
+
+The programmable current source API lack a native function for sinusoidal signal generation so we had to approximate the waveform defining configuration list with current values from a sampled sinusoidal signal. Due to _all code in a sigle file_ limitation of TSP, che code for [signal generation](sinusoidal-signal-generator.md) is included in the main `*.tsp` file.
 
 The _sweeplist_ function allow to iterate over a list of source configuration and perform a measure for each item of the list.
 
 The TSP script that get the data for EIS computation is made by four steps:
 
-1. generate discrete signal sample
-2. define configuration list and define experiments settings
-3. perform measure
-4. export data to file
+1. define experiments settings (such as mesure and soruce range, delay, signal amplitude, nplc)
+2. generate discrete time source signal samples
+3. define source configuration list
+4. perform the source sweep and take measures for every item of the list
+5. export data to file
 
 ### Configuration List
 

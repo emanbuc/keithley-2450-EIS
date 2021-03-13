@@ -1,6 +1,6 @@
 # discrete time sinusoidal signal generator
 
-Lo strumento non prevede la geenrazione di form d'onda sinusoidali, ma permette di generare segnali in corrente e tensione passando una lista di set-point da programamre sulla sorgente di corrente/tensione.
+Lo strumento non prevede la generazione di form d'onda sinusoidali, ma permette di generare segnali in corrente e tensione passando una lista di set-point da programamre sulla sorgente di corrente/tensione.
 
 ```lua
 smu.source.sweeplist("CurrentListSweep", 1,delay,repetition)
