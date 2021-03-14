@@ -33,13 +33,7 @@ The main limit of TSP is that all code should reside in a single file named `*.t
 
 Single-Sine [EIS measurements](docs/electrochemical-Impedance-spectroscopy.md) involve applying a sinusoidal perturbation (voltage or current) at different frequencies and measuring the response (current or voltage respectively). A 50mA sinusoidal source current signal has been used for this experiment and voltage across DUT has been meaured with a four wire measurement configuration.
 
-### Generate Sinusoidal current source signal
-
-The programmable current source API lack a native function for sinusoidal signal generation so we had to approximate the waveform defining configuration list with current values from a sampled sinusoidal signal. Due to _all code in a sigle file_ limitation of TSP, che code for [signal generation](sinusoidal-signal-generator.md) is included in the main `*.tsp` file.
-
-The _sweeplist_ function allow to iterate over a list of source configuration and perform a measure for each item of the list.
-
-The TSP script that get the data for EIS computation is made by four steps:
+The TSP script that get the data to perform EIS computation is made by four steps:
 
 1. define experiments settings (such as mesure and soruce range, delay, signal amplitude, nplc)
 2. generate discrete time source signal samples
@@ -47,11 +41,38 @@ The TSP script that get the data for EIS computation is made by four steps:
 4. perform the source sweep and take measures for every item of the list
 5. export data to file
 
+### Generate Sinusoidal current source signal
+
+The programmable current source API lack a native function for sinusoidal signal generation so we had to approximate the waveform defining configuration list with current values from a sampled sinusoidal signal generated with `math.sin()` function available in TSP.
+
+The _sweeplist_ function allow to iterate over a list of source configuration and perform a measure for each item of the list.
+
+```Lua
+
+--[[  Generate discrete time sine wave
+ sampleTime: Specify the sample period in seconds 
+ signalFrequency: frequency of sine wave
+ A is the amplitude of the sine wave.
+ N sample number
+ b is the signal bias
+ po is the offset (phase shift) of the signal.
+
+ reference: https://it.mathworks.com/help/simulink/slref/sinewavefunction.html
+--]]
+function generateSinusoidalSignalSampleBased(sampleTime,signalFrequency,N,A,po,b)
+ print(string.format("signal frequency %g",signalFrequency))
+ local signal = {}    -- new array
+ for k=0,N-1 do 
+  signal[k]=A*math.sin(2*math.pi*k*signalFrequency*sampleTime+po)+b
+ end
+ return signal
+end
+
+```
+
 ### Configuration List
 
-A configuration list is a list of stored settings for the source or measure function. Configuration lists allow you to store the function settings of the instrument and then return the instrument to those settings as needed.
-
-_Configuration lists_ are typically made up of multiple _configuration indexes_. You can store a **maximum of 300,000 indexes** on Keintly 2450. A _configuration index_ contains **a copy of all instrument source or measure settings at a specific point** such as:
+A configuration list is a list of stored settings for the source or measure function. On Keintly 2450 a _Configuration list_ can store a up to of 300,000 _configuration indexes_  Each _configuration index_ contains a copy of all instrument source or measure settings at a specific point such as:
 
 - source/measure function setting
 - NPLC
@@ -61,8 +82,6 @@ _Configuration lists_ are typically made up of multiple _configuration indexes_.
 - autozero
 - display digit
 
-Measure configuration lists contain the  and the settings for the source/measure function, such as the NPLC, display digits, and math settings.
-
 ## Data acquisition sampling frequency
 
 The time interval between two consecutive measure is the sum of four element:
@@ -70,22 +89,40 @@ The time interval between two consecutive measure is the sum of four element:
  1. Trigger Latency
  2. Explict source delay or implicit source autodelay
  3. Measure time
- 4. sweep delay
+ 4. Sweep delay
 
 All but trigger latency can be influenced by user configurable parameters.
 
 ![Source delay - time diagram from Reference Manual p.4-46](../media/manual_source_delay.png)
 
-### Source Delay
+### Source Delay and Autodelay
 
 The programmable current source will tak some time to reach next set point. The ammount of delay is controllerd by `smu.source.delay` parameter.
 
-#### Autodelay
+If no explict source delay is set (`smu.source.delay=0`) an autodelay will be inserted by the firmware, based on target value end load type. (see table on page 4-46 in the reference manual([3](./references.md)).
 
-If no explict source delay is set (`smu.source.delay=0`) an autodelay will be inserted by the firmware. 
- valore della corrente.
+#### Sweep Delay
+
+Il parametro sDelay può essere impostato a 0 oppure ad un valore tra 50microS e 10Ks.  (pag. 14-196 del manuale di riferimento)
+
+![sweeplist function parameters from reference manual](../media/manual_sweeplist.png)
+
+Lo sweep delay si va sempre a sommare al source delay.
+
+### Measure Time and NPLC
+
+The `NPLC` parameter set the amount of time that the input signal is measured. Lower NPLC settings result in faster reading rates, but increased noise. Higher NPLC settings result in lower reading noise, but slower reading rates.
+
+The amount of time is specified in parameters that are based on the number of power line cycles (NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
+
+NPLC can be set to any value form 0.01 to 10 so the minimimin measure time for NPLC 0.01 is 200 microseconds (with 50Hz power line) and 167 microsencods (with 60Hz power line)
+
+When source readback active two different measurement both on current and voltage are performed for each element of the configuration list.
+
+### Samplig Frequency
+
 **Attenzione che i valori riportati nella tabella a pag. 4-46 sono validi per reaback = false.**
-Con readback=true non è chiaro qualse sia il valore dell'autodelay. La mia ipotesi che il _measure time_ debba essere contato due volte (una per la tensione e una per la corrente).
+Con readback=true non è chiaro qualse sia il valore dell'delay. La mia ipotesi che il _measure time_ debba essere contato due volte (una per la tensione e una per la corrente).
 
 Tra le diverse misurazioni è necessario introdurre un ritardo (`smu.sorce.delay`) per permettere alla sorgente di corrente raggiungere il livelo programmato e stabilizzarsi.
 
@@ -97,20 +134,6 @@ I dati raccolti mostrano che l'intervallo minimo che è possibile ottenere con `
 
 L'intervallo tra due misure consecutive in un list sweep è la somma di due distinti delay: sweep delay (parametro sDelay dello sweep) e source delay .
 
-#### Sweep Delay
-
-Il parametro sDelay può essere impostato a 0 oppure ad un valore tra 50microS e 10Ks.  (pag. 14-196 del manuale di riferimento)
-
-![sweeplist function parameters from reference manual](../media/manual_sweeplist.png)
-
-Lo sweep delay si va sempre a sommare al source delay.
-
-#### Measure Time
-
-Il measure time dipende dal parametro nplc.  NPLC =0.01 => 167microSecondi Con alimentazione 60Hz , e 200 microSecondi con al nostra 50Hz (ammesso che sia veramente 50Hz .... sarebbe da misurare questo parametro visto che localmente ci possono essere scostamenti notevoli) . 
-Prendendo per buoni i 50Hz con il readback attivo dovrebbero venire fuori 400microSecondi per la componente "measure time".
-
-Il valore sale a 2ms per nplc=0.05  (0.05/50)*2 =0.002 s
 
 #### SweepDealy and NPLC parameters
 
@@ -165,8 +188,3 @@ In order to achive the maximum speed the minimul nplc value is chosen anche atut
 Seletting the most appropriate measure range it's important to get a good SNC figure.
 Measurement range should match the output signal range to obtain the best SNC. The fixed current source ranges are 10 nA, 100 nA, 1 microA, 10 microA, 100 microA, 1 mA, 10 mA, 100 mA, and 1 A
 
-### NPLC
-
-NPLC Set the amount of time that the input signal is measured. Lower NPLC settings result in faster reading rates, but increased noise. Higher NPLC settings result in lower reading noise, but slower reading rates.
-
-The amount of time is specified in parameters that are based on the number of power line cycles (NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
