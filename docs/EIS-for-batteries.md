@@ -6,14 +6,7 @@ The measurement of battery impedance is crucial for online monitoring of State o
 
 ## Programming Keithley 2450
 
-Keithley  2450 can be operated using one the supported remote command interface, running  a script from onboard Script Manager application or from interactive front panel interface. The Script Manager application can load and execute TSP script files from external storage unit connected to the USB port or from the internal memory.
-
-### Remote Controlled Operations
-
-In remote operation mode a computer (controller) is programmed to send sequences of commands to an instrument.  The controller orchestrates the actions of the instrumentation.
-
-The controller is typically programmed to request measurement results from the instrumentation and make test sequence decisions based on those measurements.
-Keithley 2450 support GPIB, SCPI, and TSP command set fro remote controlled operation.
+Keithley  2450 can be operated using one the supported remote command interface, loading and running a script locally with the  _Script Manager_ or from the front panel interface. The Script Manager can save, load and execute script files from an external storage unit connected to the USB port or from the internal memory.
 
 ## The Test Script Processor (TSP®)
 
