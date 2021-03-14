@@ -35,13 +35,57 @@ Single-Sine [EIS measurements](docs/electrochemical-Impedance-spectroscopy.md) i
 
 The TSP script that get the data to perform EIS computation is made by four steps:
 
-1. define experiments settings (such as mesure and soruce range, delay, signal amplitude, nplc)
+1. set experiment parameters values (such as mesure and soruce range, delay, signal amplitude, nplc)
 2. generate discrete time source signal samples
-3. define source configuration list
+3. init configuration list
 4. perform the source sweep and take measures for every item of the list
 5. export data to file
 
-### Generate Sinusoidal current source signal
+### Step1: Experiments parameters
+
+Source parameters must be set before the creation of the source configuration list.
+
+For impedence estimation a current imput signal is sourced and a voltage on DUT terminals is measured. In order to achive the maximum speed autorange is turned off.
+
+**source settings**:
+
+```lua
+ smu.source.func = smu.FUNC_DC_CURRENT
+ smu.source.readback = smu.ON
+ smu.source.vlimit.level = 21 -- [V]
+ smu.source.autorange = smu.OFF
+ smu.source.range = 0.1 --[A]
+ smu.source.delay = 0 -- [s]
+```
+
+`smu.source.readback = smu.ON` mean that the output of the measure will include the measured source singal levels while with `smu.source.readback = smu.OFF` the programmed value is used. The source signal measure is executed immidiatly before the measure signal measuremnt. This additional measure require some time and increase the overall time required for each messuremt.
+
+`smu.source.autorange = smu.OFF` disables the autorange function to avoid delay during range changes. A fixed `smu.source.range = 0.010` is therfore used.
+
+`smu.source.delay=0` allow to control the delay between two measures only with `delay` paramer `function`.
+
+**Measure settings:**
+
+In order to achive the maximum speed the minimum nplc value is chosen, autorange is turned off  and autozero executed only once.
+
+```lua
+ smu.measure.func = smu.FUNC_DC_VOLTAGE
+ smu.measure.autorange = smu.OFF
+ smu.measure.range = 5 -- [V]
+ smu.measure.nplc = 0.01 -- from 0.01 to 10
+ smu.measure.sense=smu.SENSE_4WIRE
+ smu.measure.autozero.once()
+```
+
+#### Source and Measure Range
+
+Source and measurement range should match the output signal range to obtain the best SNC. The instrument will use the next range from the list of available ranges.
+For Keithly 2450 feature the following ranges:
+
+- current ranges: 10 nA, 100 nA, 1 microA, 10 microA, 100 microA, 1 mA, 10 mA, 100 mA, and 1 A
+- voltage ranges: 20 mV, 200 mV, 2 V, 20 V, and 200 V
+
+### Step2: Generate Sinusoidal current source signal
 
 The programmable current source API lack a native function for sinusoidal signal generation so we had to approximate the waveform defining configuration list with current values from a sampled sinusoidal signal generated with `math.sin()` function available in TSP.
 
@@ -70,7 +114,7 @@ end
 
 ```
 
-### Configuration List
+### Step3: Init configuration List
 
 A configuration list is a list of stored settings for the source or measure function. On Keintly 2450 a _Configuration list_ can store a up to of 300,000 _configuration indexes_  Each _configuration index_ contains a copy of all instrument source or measure settings at a specific point such as:
 
@@ -81,6 +125,16 @@ A configuration list is a list of stored settings for the source or measure func
 - autorange
 - autozero
 - display digit
+
+### Step4: perform measure
+
+TO BE COMPLETED
+
+### Step5: export data to file
+
+
+TO BE COMPLETED
+
 
 ## Data acquisition sampling frequency
 
@@ -103,11 +157,9 @@ If no explict source delay is set (`smu.source.delay=0`) an autodelay will be in
 
 #### Sweep Delay
 
-Il parametro sDelay può essere impostato a 0 oppure ad un valore tra 50microS e 10Ks.  (pag. 14-196 del manuale di riferimento)
+The `smu.source.sweeplist()` function has many parameters to customize the sweep. The sweep delay paramer can be used to insert a delay beetween measurement points. See page 14-196 iun the reference manual([3](./references.md)).
 
 ![sweeplist function parameters from reference manual](../media/manual_sweeplist.png)
-
-Lo sweep delay si va sempre a sommare al source delay.
 
 ### Measure Time and NPLC
 
@@ -115,76 +167,12 @@ The `NPLC` parameter set the amount of time that the input signal is measured. L
 
 The amount of time is specified in parameters that are based on the number of power line cycles (NPLCs). Each power line cycle for 60 Hz is 16.67 ms (1/60); for 50 Hz, it is 20 ms (1/50).
 
-NPLC can be set to any value form 0.01 to 10 so the minimimin measure time for NPLC 0.01 is 200 microseconds (with 50Hz power line) and 167 microsencods (with 60Hz power line)
+NPLC can be set to any value form 0.01 to 10 then minimimin measure time for NPLC 0.01 is 200 microseconds (with 50Hz power line) and 167 microsencods (with 60Hz power line)
 
 When source readback active two different measurement both on current and voltage are performed for each element of the configuration list.
 
 ### Samplig Frequency
 
-**Attenzione che i valori riportati nella tabella a pag. 4-46 sono validi per reaback = false.**
-Con readback=true non è chiaro qualse sia il valore dell'delay. La mia ipotesi che il _measure time_ debba essere contato due volte (una per la tensione e una per la corrente).
+Running the experiment with NPLC = 0.01 and a source signal with 50mA amplitude, the resulting sampling interval is beetween 1 and 2 ms with mean value 1.46ms.
 
-Tra le diverse misurazioni è necessario introdurre un ritardo (`smu.sorce.delay`) per permettere alla sorgente di corrente raggiungere il livelo programmato e stabilizzarsi.
-
-Lo strumento sarebbe in grado di eseguire le misure di tensione ai terminal del DUT con un intervallo di circa 1mS, ma l'intervallo di campionamento non è costante.
-
-I dati raccolti mostrano che l'intervallo minimo che è possibile ottenere con `smu.source.readback = smu.ON`, `nplc=0.01`  e le forme d'onda sinusoidali nel range di frequenze utilizzate per l'esperimento è variabile e compreso tra 1ms e 3ms
-
- La variabilità assoluta dell'intervallo di campionamento sembra  essere indipendente dal valore del paramtro `smu.sorce.delay` almeno per valori comoresi tra 0 e 10.
-
-L'intervallo tra due misure consecutive in un list sweep è la somma di due distinti delay: sweep delay (parametro sDelay dello sweep) e source delay .
-
-
-#### SweepDealy and NPLC parameters
-
-Impostando un `sweep delay=0.01` si ottiene un intervallo di campionamento pari a circa 10-12ms per  tutte le frequenza testate tra 0.05Hz e 40Hz
-
-Questa scelta consente inoltre di utilizzare un valore  di nplc più elevato per aumentare ridurre la rumososità della misura senza limitare in maniera significativa l'analisi spettrale.
-
-I due valori permettono un trade-off tra frequenza di campionamento e rumorosità della misura. Negli esperimenti sono state provate ad esempio le combinaizoni:
-
-- `sweep delay=0.01 , nplc=0.1` permette di ottenere ottenere un intervallo di campionamento di 15ms con variabilità inferiore ad 1ms.
-- `sweep delay=0.005 , nplc=0.04` permette di ottenere ottenere un intervallo di campionamento di circa 7ms con variabilità inferiore ad 1ms
-- `sweep delay=0.005 , nplc=0.05` permette di ottenere ottenere un intervallo di campionamento di circa 7.5ms con variabilità inferiore ad 1ms
-
-Il valore esatto delle frequnaza di campionamento dipende dalla frequenza della tensione che alimenta lo strumento e non è quindi determinabile a priori con precisione. Approssimativamente 50Hz in Italia, ma localmente si possono verificare scostamenti significativi.
-
-## Source Settings
-
-Source parameters must be set before the creation of the source configuration list.
-
-For impedence estimation a current imput signal is sourced and a voltage on DUT terminals is measured.
-
-```lua
- smu.source.func = smu.FUNC_DC_CURRENT
- smu.source.readback = smu.ON
- smu.source.vlimit.level = 21 -- [V]
- smu.source.autorange = smu.OFF
- smu.source.range = 0.050 --[A]
- smu.source.delay = 0 -- [s]
-```
-
-`smu.source.readback = smu.ON` mean that the output of the measure will include the measured source singal levels while with `smu.source.readback = smu.OFF` the programmed value is used. The source signal measure is executed immidiatly before the measure signal measuremnt. This additional measure require some time and increase the overall time required for each messuremt.
-
-`smu.source.autorange = smu.OFF` disables the autorange function to avoid delay during range changes. A fixed `smu.source.range = 0.010` is therfore used.
-
-`smu.source.delay=0` allow to control the delay between two measures only with `delay` paramer `function`.
-
-## Measure Settings
-
-In order to achive the maximum speed the minimul nplc value is chosen anche atutoero functionality is turned off. 
-
-```lua
- smu.measure.func = smu.FUNC_DC_VOLTAGE
- smu.measure.autorange = smu.OFF
- smu.measure.range = 5 -- [V]
- smu.measure.nplc = 0.01 -- from 0.01 to 10
- smu.measure.sense=smu.SENSE_4WIRE
- smu.measure.autozero.once()
-```
-
-### Measure Range
-
-Seletting the most appropriate measure range it's important to get a good SNC figure.
-Measurement range should match the output signal range to obtain the best SNC. The fixed current source ranges are 10 nA, 100 nA, 1 microA, 10 microA, 100 microA, 1 mA, 10 mA, 100 mA, and 1 A
 
