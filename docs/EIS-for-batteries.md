@@ -13,11 +13,7 @@ Keithley  2450 can be operated using one the supported remote command interface,
 In remote operation mode a computer (controller) is programmed to send sequences of commands to an instrument.  The controller orchestrates the actions of the instrumentation.
 
 The controller is typically programmed to request measurement results from the instrumentation and make test sequence decisions based on those measurements.
-Keithley 2450 support GPIB, SCPI, and TSP remote command set.
-
-### Local Stand-Alone Operations
-
-TO BE COMPLETED
+Keithley 2450 support GPIB, SCPI, and TSP command set fro remote controlled operation.
 
 ## The Test Script Processor (TSP®)
 
@@ -33,12 +29,12 @@ The main limit of TSP is that all code should reside in a single file named `*.t
 
 Single-Sine [EIS measurements](docs/electrochemical-Impedance-spectroscopy.md) involve applying a sinusoidal perturbation (voltage or current) at different frequencies and measuring the response (current or voltage respectively). A 50mA sinusoidal source current signal has been used for this experiment and voltage across DUT has been meaured with a four wire measurement configuration.
 
-The TSP script that get the data to perform EIS computation is made by four steps:
+The TSP script that get the data to perform EIS computation include four main steps
 
-1. set experiment parameters values (such as mesure and soruce range, delay, signal amplitude, nplc)
+1. set experiment parameters values (such as measure and source range, delay, signal amplitude, nplc)
 2. generate discrete time source signal samples
-3. init configuration list
-4. perform the source sweep and take measures for every item of the list
+3. init configuration list with generaterd source current and measurement settings
+4. perform the source sweep and measure current and voltage for every configuration of the list
 5. export data to file
 
 ### Step1: Experiments parameters
@@ -116,7 +112,9 @@ end
 
 ### Step3: Init configuration List
 
-A configuration list is a list of stored settings for the source or measure function. On Keintly 2450 a _Configuration list_ can store a up to of 300,000 _configuration indexes_  Each _configuration index_ contains a copy of all instrument source or measure settings at a specific point such as:
+A configuration list is a list of stored settings for the source or measure function. On Keintly 2450 a _Configuration list_ can store a up to of 300,000 _configuration indexes_  
+
+Each _configuration index_ contains a copy of all instrument source and measure settings such as:
 
 - source/measure function setting
 - NPLC
@@ -126,15 +124,34 @@ A configuration list is a list of stored settings for the source or measure func
 - autozero
 - display digit
 
+The current `smu.source.level` value is replaced with value from generated sinusoidal current signal.
+
+```Lua
+ smu.source.configlist.create("CurrentListSweep")
+ 
+ for index = 1, table.getn(currentLevels) do
+  smu.source.level = currentLevels[index]
+  smu.source.configlist.store("CurrentListSweep")
+ end
+
+ smu.source.sweeplist("CurrentListSweep", 1,delay,repetition)
+```
+
 ### Step4: perform measure
 
-TO BE COMPLETED
+After configuration list is creared a new trigger is fired and wait for completation. 
+
+```Lua
+ trigger.model.initiate()
+ waitcomplete()
+
+```
+
+Data aquired during sweep operation are saved to a memory buffer
 
 ### Step5: export data to file
 
-
-TO BE COMPLETED
-
+All data in memory buffer are formatted in CSV and exported in file in the storage device conneted to USB port.
 
 ## Data acquisition sampling frequency
 
